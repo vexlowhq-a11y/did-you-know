@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="Illustration of the pyramids of Egypt under a desert sky">
+  <rect width="400" height="260" fill="#3a2a12"/>
+  <circle cx="320" cy="60" r="30" fill="#ffcc33"/>
+  <polygon points="120,200 200,80 280,200" fill="#c99a4d"/>
+  <polygon points="200,200 260,100 320,200" fill="#a9793a"/>
+  <polygon points="150,200 200,120 200,200" fill="#8a5f2c" opacity="0.6"/>
+  <rect x="60" y="200" width="320" height="16" fill="#8a5f2c"/>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 480" role="img" aria-label="Illustration of a planet, an astronaut and a glowing lightbulb representing curious facts">
+  <defs>
+    <radialGradient id="planetGlow" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#4db8ff"/>
+      <stop offset="100%" stop-color="#1a5fa8"/>
+    </radialGradient>
+  </defs>
+
+  <!-- stars -->
+  <g fill="#ffffff">
+    <circle cx="40" cy="60" r="2.5"/>
+    <circle cx="120" cy="30" r="1.6"/>
+    <circle cx="500" cy="70" r="2"/>
+    <circle cx="470" cy="160" r="1.4"/>
+    <circle cx="60" cy="220" r="1.8"/>
+    <circle cx="30" cy="380" r="2.2"/>
+    <circle cx="530" cy="330" r="1.6"/>
+    <circle cx="480" cy="420" r="2"/>
+  </g>
+
+  <!-- planet -->
+  <circle cx="360" cy="150" r="95" fill="url(#planetGlow)"/>
+  <ellipse cx="360" cy="150" rx="150" ry="22" fill="none" stroke="#ffcc33" stroke-width="6" opacity="0.85" transform="rotate(-18 360 150)"/>
+  <path d="M290 110c15 8 30 6 45-2s35-8 50 2" stroke="#0d0d0f" stroke-width="5" fill="none" opacity="0.35"/>
+  <path d="M280 170c20 10 45 6 60-4" stroke="#0d0d0f" stroke-width="5" fill="none" opacity="0.3"/>
+
+  <!-- lightbulb -->
+  <g transform="translate(115,260)">
+    <path d="M45 0c-25 0-45 20-45 44 0 17 9.5 27.5 18 36.4 4.8 4.9 7.4 9.3 7.4 14.7v7h39v-7c0-5.4 2.6-9.8 7.4-14.7 8.5-8.9 18-19.4 18-36.4C90 20 70 0 45 0z" fill="#ffcc33"/>
+    <rect x="24" y="108" width="42" height="12" rx="5" fill="#ffffff"/>
+    <rect x="29" y="124" width="32" height="10" rx="5" fill="#ffffff"/>
+    <circle cx="45" cy="44" r="14" fill="#0d0d0f" opacity="0.85"/>
+  </g>
+
+  <!-- astronaut -->
+  <g transform="translate(210,300)">
+    <ellipse cx="70" cy="150" rx="55" ry="12" fill="#000000" opacity="0.25"/>
+    <rect x="35" y="60" width="70" height="85" rx="30" fill="#f2f2f2"/>
+    <circle cx="70" cy="40" r="42" fill="#f2f2f2"/>
+    <circle cx="70" cy="40" r="30" fill="#123a5e"/>
+    <circle cx="60" cy="34" r="6" fill="#ffffff" opacity="0.7"/>
+    <rect x="46" y="90" width="48" height="26" rx="8" fill="#3aa0ff"/>
+    <circle cx="70" cy="103" r="7" fill="#ffcc33"/>
+    <rect x="10" y="70" width="26" height="16" rx="8" fill="#f2f2f2"/>
+    <rect x="104" y="70" width="26" height="16" rx="8" fill="#f2f2f2"/>
+    <rect x="45" y="140" width="20" height="28" rx="8" fill="#f2f2f2"/>
+    <rect x="75" y="140" width="20" height="28" rx="8" fill="#f2f2f2"/>
+  </g>
+</svg>

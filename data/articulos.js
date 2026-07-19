@@ -1,0 +1,78 @@
+/*
+  ARTÍCULOS — fuente de "Últimas publicadas" y de las páginas de categoría
+  ==========================================================================
+  GENERADO AUTOMÁTICAMENTE por el panel de administración
+  (admin/index.html). No lo edites a mano: los cambios se van a
+  perder la próxima vez que guardes algo desde el panel.
+  La fuente real es data/articulos.json.
+*/
+const VEXLOW_ARTICLES = [
+  {
+    "title": "1958 Suecia",
+    "category": "sports",
+    "categoryLabel": "Sports",
+    "icon": "⚽",
+    "date": "2026-07-19",
+    "readTime": "",
+    "topic": "mundial",
+    "subtopic": "brasil",
+    "slug": "1958-suecia",
+    "dek": "Brasil conquistó su primer título mundial al vencer 5-2 a Suecia en la final, con destacadas actuaciones de Didí y del joven Pelé.",
+    "image": "img/sports/screenshot-1.jpg",
+    "videoUrl": "",
+    "trending": false,
+    "body": "La Copa Mundial de la FIFA Suecia 1958 fue la sexta edición de la Copa Mundial de Fútbol. Fue realizada en la primavera de Suecia, entre el 8 y el 28 de junio de 1958.\nParticiparon en la fase final dieciséis selecciones nacionales; las selecciones debutantes de Unión Soviética, Irlanda del Norte y Gales lograron quedar entre los primeros ocho finalistas. Por primera (y única) vez en la historia del torneo, las cuatro selecciones del Reino Unido compitieron en la fase final. El partido final se desarrolló en Estocolmo, entre Brasil y Suecia. Con una gran actuación de Didí y el juvenil Pelé, los brasileños se coronaron por primera vez como campeones del mundo al derrotar a los locales por 5-2 y se convirtió en la primera selección en ganar un mundial fuera de su continente.] Desde esta versión el certamen comenzó a ser intercalado con América hasta 1998. El balón oficial fue Top Star, fabricado por una compañía local.\n\n",
+    "href": "categoria/sports/1958-suecia.html"
+  },
+  {
+    "title": "1962 Chile",
+    "category": "sports",
+    "categoryLabel": "Sports",
+    "icon": "⚽",
+    "date": "2026-07-19",
+    "readTime": "",
+    "topic": "mundial",
+    "subtopic": "brasil",
+    "slug": "1962-chile",
+    "dek": "La Copa Mundial de la FIFA Chile 1962 se disputó del 30 de mayo al 17 de junio de 1962 y es recordada por la intensa competitividad y la famosa",
+    "image": "img/sports/screenshot-3.jpg",
+    "videoUrl": "",
+    "trending": false,
+    "body": "La Copa Mundial de la FIFA Chile 1962 fue la séptima edición de la Copa Mundial de Fútbol. Se realizó en Chile entre el 30 de mayo y el 17 de junio de 1962. \nTras Brasil 1950, el principal campeonato de fútbol internacional regresó a América después de haberse disputado dos veces consecutivas en Europa. Se eligió a Chile como la sede en 1956 y la organización, que adoptó el lema «Porque nada tenemos, lo haremos todo», superó diversas dificultades, principalmente respecto a la infraestructura necesaria, lo que amenazó albergarlo, en especial tras el terremoto de Valdivia de 1960, el más potente registrado instrumentalmente en la historia universal, con una magnitud de 9,5 MW, que afectó al sur del país. Finalmente, se celebró en cuatro sedes, el segundo menor número en su historia:[] las ciudades de Arica, Rancagua, Santiago y Viña del Mar. \n\n[publicidad]\n\nEn el ámbito deportivo, participaron 16 selecciones. Tuvo la mayor cifra de goleadores, seis con cuatro tantos. Se conoce como el «Mundial más violento de la historia» debido a sus numerosos lesionados y partidos como la Batalla de Santiago entre Chile e Italia.[] Destacó el único «gol olímpico» que se ha anotado en el torneo, obra del colombiano Marcos Coll ante la Unión Soviética, y las habilidades del brasileño Garrincha, reconocido como el «mejor jugador» del campeonato (su compatriota Pelé estaba lesionado). La final se disputó en el Estadio Nacional en Santiago, donde Brasil consiguió su segundo título mundial al ganar a Checoslovaquia por 3-1, la última vez que ha ocurrido consecutivamente. Los locales alcanzaron el tercer puesto al vencer a Yugoslavia por 1-0, el «principal logro del fútbol chileno en su historia».\nEl certamen tuvo el estreno de un balón con forma esférica regular: Crack,[] fabricado por una compañía local, el uso de los goles tras los puntos para definir los clasificados en los grupos: su promedio, y música oficial: la canción «El rock del Mundial» de la banda local Los Ramblers. \n\n",
+    "href": "categoria/sports/1962-chile.html"
+  },
+  {
+    "title": "1970 México",
+    "category": "sports",
+    "categoryLabel": "Sports",
+    "icon": "⚽",
+    "date": "2026-07-19",
+    "readTime": "",
+    "topic": "mundial",
+    "subtopic": "brasil",
+    "slug": "1970-mexico",
+    "dek": "La Copa Mundial de la FIFA México 1970 fue la novena edición del campeonato mundial de fútbol masculino organizado por la FIFA.",
+    "image": "",
+    "videoUrl": "",
+    "trending": false,
+    "body": "La Copa Mundial de la FIFA México 1970 fue la novena edición del campeonato mundial de fútbol masculino organizado por la FIFA. Se celebró en México, entre el 31 de mayo y el 21 de junio de dicho año. Un total de 16 selecciones nacionales participaron en la ronda final, reunidas en cuatro grupos de 4 equipos; luego los dos primeros de cada grupo avanzaron a la ronda de cuartos de final, a partir de la cual se dieron duelos de eliminación directa.\nUna serie de acontecimientos y coyunturas se conjuntaron para que este torneo trascendiera como un parteaguas, no solo de la organización del máximo certamen futbolístico a futuro, sino del mismo desarrollo del deporte. Como innovaciones se presentaron por primera vez las tarjetas amarillas y rojas para señalar las amonestaciones y expulsiones (aunque estas últimas no se usaron);[] se implementaron los cambios en el trascurso del tiempo regular, pudiendo realizar dos sustituciones; aquí hizo su debut como proveedor del balón oficial la marca Adidas; y, aunque la televisión transmitía a nivel local las Copas del Mundo desde 1954, México 1970 representó la primera transmitida en vivo y a color a todo el mundo, generando un éxito tal, que dio pie a la relación que este medio y la FIFA, convertirán en el rubro de negocio más lucrativo para el balompié, los derechos de transmisión.[]\nSin embargo, el mayor impacto histórico del torneo residió en la destacada generación de futbolistas que participaron en el certamen, para que este torneo sea considerado por diversos expertos como uno de los mejores en la historia del fútbol, debido tanto a su juego limpio (no hubo expulsados en todo su desarrollo) como a los diversos planteles que asistieron con algunos de los mejores jugadores de este deporte, como Pelé, Franz Beckenbauer, Uwe Seeler, Gerd Müller, Luigi Riva, Gianni Rivera, Teofilo Cubillas, Jairzinho, Gérson, Roberto Rivelino, Tostao y Bobby Charlton, entre otros. El talento técnico modificó, en beneficio del espectáculo, los métodos tácticos rudos y especulativos, prevalecientes en las dos anteriores ediciones, remplazándolos por sistemas abiertos, ofensivos y verticales, que derivaron en una notable exhibición futbolística, que tuvo su cenit en el «Partido del siglo» y el «Jogo bonito» de la selección campeona. \nDurante los cuartos de final se dieron grandes exhibiciones futbolísticas: Uruguay venció a Unión Soviética con un gol en los minutos finales de la prórroga, Italia remontó el partido contra México con un categórico 4-1, Brasil venció 4-2 a Perú en un partido con un gran despliegue ofensivo de ambos bandos (49 tiros a puerta en total: 27 brasileños y 22 peruanos) y Alemania Federal remontó el partido ante la campeona defensora Inglaterra en la prórroga, luego de ir abajo por dos goles.\nLos seleccionados de Alemania Federal, Brasil, Italia y Uruguay, todos campeones de torneos previos, llegaron a las semifinales. \n\n[publicidad]\n\nAdemás, Brasil, Italia y Uruguay habían obtenido anteriormente dos veces la copa, por lo que eran candidatos a obtenerla en propiedad en caso de coronarse campeones. Mientras Brasil derrotó a Uruguay por 3-1 en el Estadio Jalisco, Italia y la Alemania Federal se enfrentaron en el Estadio Azteca en uno de los partidos más memorables y, quizás, el mejor de la historia; después de los noventa minutos, ambos equipos estaban empatados a un gol, por lo que se disputó una prórroga que terminó con victoria italiana por 4-3. Este partido se conoce como el «partido del siglo».\nEn la final, Brasil derrotó a Italia por 4-1. Así, el equipo sudamericano se coronó por tercera vez en su historia como campeón del mundo, adjudicándose definitivamente la Copa Jules Rimet. ",
+    "href": "categoria/sports/1970-mexico.html"
+  },
+  {
+    "title": "1994 Estados Unidos",
+    "category": "sports",
+    "categoryLabel": "Sports",
+    "icon": "⚽",
+    "date": "2026-07-19",
+    "readTime": "",
+    "topic": "mundial",
+    "subtopic": "brasil",
+    "slug": "1994-estados-unidos",
+    "dek": "The 1994 FIFA World Cup was the 15th edition of the FIFA World Cup and took place in the United States from June 17 to July 17, 1994.",
+    "image": "img/sports/screenshot-5-1.jpg",
+    "videoUrl": "",
+    "trending": false,
+    "body": "The **1994 FIFA World Cup** was the 15th edition of the FIFA World Cup and took place in the **United States** from **June 17 to July 17, 1994**.\n\nThe United States was selected as the host nation for the first time in FIFA World Cup history, a decision that sparked considerable controversy because soccer had little tradition in the country compared to sports such as baseball, American football, ice hockey, and basketball. However, thanks to the nation's strong economy and world-class infrastructure, the tournament proved to be a remarkable success. It set long-standing attendance and revenue records and played a key role in the growth of soccer in the United States, where the sport has since become increasingly popular.\n[publicidad]\nThis was the last FIFA World Cup to feature **24 national teams**, with the top four third-placed teams from the group stage advancing to the Round of 16. The tournament was played across **nine host cities**, with stadiums averaging around **70,000 spectators** per match.\n[publicidad]\n**Brazil** and **Italy** met in the final at the **Rose Bowl Stadium** in Pasadena, near Los Angeles. Brazil had been the only team from the Americas to reach the quarterfinals, while the remaining quarterfinalists came from Europe. After a scoreless draw in both regular time and extra time, the match became the **first FIFA World Cup final to be decided by a penalty shootout**. Brazil claimed its **fourth World Cup title** after Italy's **Roberto Baggio** missed the decisive penalty, giving Brazil a **3–2 victory** in the shootout.\n\nSeveral players delivered outstanding performances during the tournament, including Brazil's **Romário** and **Bebeto**, Italy's **Roberto Baggio**, Bulgaria's **Hristo Stoichkov**, Russia's **Oleg Salenko**, Romania's **Gheorghe Hagi**, the Netherlands' **Dennis Bergkamp**, Belgium's **Michel Preud'homme**, Sweden's **Martin Dahlin** and **Kennet Andersson**, and Germany's **Jürgen Klinsmann**. Meanwhile, Argentine legend **Diego Maradona** was expelled from the tournament after testing positive for **ephedrine** following Argentina's match against Nigeria.\n[publicidad]\nThe tournament mascot was **Striker**, a dog dressed in a soccer uniform. The official song was **\"Gloryland,\"** performed by **Daryl Hall and the Sounds of Blackness**, inspired by the 19th-century American patriotic song **\"The Battle Hymn of the Republic.\"** The 1994 World Cup also marked the first use of the **FIFA Anthem** during the pre-match ceremonies.\n\nAt **42 years old**, Cameroonian forward **Roger Milla** became the oldest player to appear in a FIFA World Cup and also the oldest player to score a World Cup goal, finding the net against Russia. His record stood until **2014**, when it was surpassed by Colombian goalkeeper **Faryd Mondragón**.\n[publicidad]\nThe tournament was overshadowed by tragedy shortly after its conclusion. Colombian defender **Andrés Escobar** was murdered only days after returning home to Colombia, reportedly because his own goal against the United States had caused major gambling losses for powerful drug traffickers. His death remains one of the darkest moments in football history.\n\n![](img/sports/screenshot-4.jpg)\n",
+    "href": "categoria/sports/1994-estados-unidos.html"
+  }
+];

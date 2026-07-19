@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="Illustration of a glowing human brain representing memory">
+  <rect width="400" height="260" fill="#161618"/>
+  <path d="M200 60c-35 0-55 22-58 42-20 6-32 26-26 46-14 10-16 32-2 46 4 22 26 36 48 34 8 10 22 16 38 16s30-6 38-16c22 2 44-12 48-34 14-14 12-36-2-46 6-20-6-40-26-46-3-20-23-42-58-42z" fill="#3aa0ff" opacity="0.85"/>
+  <circle cx="170" cy="110" r="6" fill="#ffcc33"/>
+  <circle cx="230" cy="90" r="5" fill="#ffcc33"/>
+  <circle cx="210" cy="150" r="6" fill="#ffcc33"/>
+  <circle cx="250" cy="140" r="4" fill="#ffcc33"/>
+  <circle cx="160" cy="160" r="4" fill="#ffcc33"/>
+</svg>

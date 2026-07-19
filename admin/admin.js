@@ -1,0 +1,1341 @@
+(function () {
+  var categories = [];
+  var topicsByCategory = {};
+  var topicGroupsRaw = {};
+  var subtopicsByTopicKey = {};
+  var heroData = [];
+  var articlesData = [];
+  var heroEditIndex = null;
+  var articleEditIndex = null;
+
+  /* ---- Publicar cambios en internet (git add + commit + push) ---- */
+  var deployBtn = document.getElementById('deployBtn');
+  deployBtn.addEventListener('click', function () {
+    deployBtn.disabled = true;
+    var originalText = deployBtn.textContent;
+    deployBtn.textContent = 'Publicando… (puede tardar un minuto)';
+    postJSON('/api/deploy', {}).then(function (result) {
+      deployBtn.disabled = false;
+      deployBtn.textContent = originalText;
+      if (result.nothingToCommit) {
+        toast('No había cambios nuevos para publicar');
+      } else {
+        toast('¡Listo! Los cambios ya se subieron — el sitio se va a actualizar en unos minutos.');
+      }
+    }).catch(function (err) {
+      deployBtn.disabled = false;
+      deployBtn.textContent = originalText;
+      toast(err.message || 'No se pudo publicar los cambios', true);
+    });
+  });
+
+  /* ---- Tabs ---- */
+  document.querySelectorAll('.admin-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.admin-tab').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.admin-panel').forEach(function (p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+    });
+  });
+
+  /* ---- Toast ---- */
+  var toastEl = document.getElementById('adminToast');
+  var toastTimer = null;
+  function toast(msg, isError) {
+    toastEl.textContent = msg;
+    toastEl.className = 'admin-toast show' + (isError ? ' error' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+  }
+
+  /* ---- API helpers ---- */
+  function getJSON(url) {
+    return fetch(url).then(function (r) { return r.json(); });
+  }
+  function apiRequest(method, url, data) {
+    return fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      return r.json().catch(function () { return null; }).then(function (body) {
+        if (!r.ok) throw new Error((body && body.error) || 'Error al guardar');
+        return body;
+      });
+    });
+  }
+  function postJSON(url, data) {
+    return apiRequest('POST', url, data);
+  }
+  function deleteJSON(url, data) {
+    return apiRequest('DELETE', url, data);
+  }
+
+  function categoryMeta(slug) {
+    return categories.find(function (c) { return c.slug === slug; }) || { slug: slug, label: slug, icon: '📰' };
+  }
+  function contentCategories() {
+    return categories.filter(function (c) { return c.slug !== 'trending'; });
+  }
+
+  function fillSelect(select, list, valueKey, labelFn) {
+    select.innerHTML = '';
+    list.forEach(function (item) {
+      var opt = document.createElement('option');
+      opt.value = item[valueKey];
+      opt.textContent = labelFn(item);
+      select.appendChild(opt);
+    });
+  }
+
+  /* =====================================================
+     HERO
+     ===================================================== */
+  var heroList = document.getElementById('heroList');
+  var heroForm = document.getElementById('heroForm');
+  var heroFormTitle = document.getElementById('heroFormTitle');
+  var heroCategory = document.getElementById('heroCategory');
+  var heroTitleInput = document.getElementById('heroTitleInput');
+  var heroDekInput = document.getElementById('heroDekInput');
+  var heroImageUpload = document.getElementById('heroImageUpload');
+  var heroImageStatus = document.getElementById('heroImageStatus');
+  var heroImageRemoveBtn = document.getElementById('heroImageRemoveBtn');
+  var heroColorPalette = document.getElementById('heroColorPalette');
+  var heroHrefInput = document.getElementById('heroHrefInput');
+  var heroCancelBtn = document.getElementById('heroCancelBtn');
+
+  var heroCurrentImage = '';
+  var heroCurrentColor = 'auto';
+
+  var COLOR_PALETTE = [
+    { value: 'auto', label: 'Automático (según el brillo de la imagen)' },
+    { value: '#ffffff', label: 'Blanco' },
+    { value: '#3D8BFF', label: 'Azul Did You Know?' },
+    { value: '#FFB020', label: 'Naranja Did You Know?' },
+    { value: '#0E1116', label: 'Navy oscuro' }
+  ];
+
+  function renderColorPalette() {
+    heroColorPalette.innerHTML = '';
+    COLOR_PALETTE.forEach(function (c) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'color-swatch' + (c.value === 'auto' ? ' auto' : '') + (heroCurrentColor === c.value ? ' selected' : '');
+      btn.title = c.label;
+      if (c.value !== 'auto') btn.style.background = c.value;
+      btn.addEventListener('click', function () {
+        heroCurrentColor = c.value;
+        renderColorPalette();
+      });
+      heroColorPalette.appendChild(btn);
+    });
+  }
+  renderColorPalette();
+
+  function updateHeroImageStatus() {
+    heroImageStatus.textContent = heroCurrentImage
+      ? 'Imagen actual: ' + heroCurrentImage.replace(/^img\//, '')
+      : 'Sin imagen (usa el color de la categoría).';
+    heroImageRemoveBtn.hidden = !heroCurrentImage;
+  }
+  updateHeroImageStatus();
+
+  heroImageUpload.addEventListener('change', function () {
+    var file = heroImageUpload.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      heroImageStatus.textContent = 'Subiendo imagen…';
+      postJSON('/api/upload-image', {
+        category: heroCategory.value,
+        filename: file.name,
+        dataBase64: base64
+      }).then(function (result) {
+        heroCurrentImage = result.path;
+        updateHeroImageStatus();
+        toast('Imagen subida');
+      }).catch(function (err) {
+        updateHeroImageStatus();
+        toast(err.message || 'No se pudo subir la imagen', true);
+      }).finally(function () {
+        heroImageUpload.value = '';
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+  heroImageRemoveBtn.addEventListener('click', function () {
+    heroCurrentImage = '';
+    updateHeroImageStatus();
+  });
+
+  function renderHeroList() {
+    heroList.innerHTML = '';
+    if (heroData.length === 0) {
+      heroList.innerHTML = '<div class="admin-empty">Todavía no hay diapositivas.</div>';
+      return;
+    }
+    heroData.forEach(function (slide, i) {
+      var meta = categoryMeta(slide.category);
+      var row = document.createElement('div');
+      row.className = 'admin-item';
+
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      if (slide.image) {
+        thumb.style.backgroundImage = "url('/site/" + slide.image + "')";
+      } else {
+        thumb.textContent = meta.icon;
+        thumb.style.background = 'var(--surface-2)';
+      }
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      info.innerHTML = '<div class="ttl"></div><div class="meta"></div>';
+      info.querySelector('.ttl').textContent = slide.title;
+      info.querySelector('.meta').textContent = meta.icon + ' ' + meta.label + (slide.image ? ' · con imagen' : ' · color de fondo');
+
+      var order = document.createElement('div');
+      order.className = 'order-controls';
+      var up = document.createElement('button');
+      up.type = 'button'; up.textContent = '▲'; up.title = 'Subir';
+      up.disabled = i === 0;
+      up.addEventListener('click', function () { moveHero(i, -1); });
+      var down = document.createElement('button');
+      down.type = 'button'; down.textContent = '▼'; down.title = 'Bajar';
+      down.disabled = i === heroData.length - 1;
+      down.addEventListener('click', function () { moveHero(i, 1); });
+      order.appendChild(up);
+      order.appendChild(down);
+
+      var actions = document.createElement('div');
+      actions.className = 'item-actions';
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button'; editBtn.textContent = 'Editar';
+      editBtn.addEventListener('click', function () { startEditHero(i); });
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.textContent = 'Eliminar'; delBtn.className = 'danger';
+      delBtn.addEventListener('click', function () { deleteHero(i); });
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(thumb);
+      row.appendChild(info);
+      row.appendChild(order);
+      row.appendChild(actions);
+      heroList.appendChild(row);
+    });
+  }
+
+  function moveHero(index, dir) {
+    var target = index + dir;
+    if (target < 0 || target >= heroData.length) return;
+    var tmp = heroData[index];
+    heroData[index] = heroData[target];
+    heroData[target] = tmp;
+    saveHero('Orden actualizado');
+  }
+
+  function startEditHero(i) {
+    heroEditIndex = i;
+    var s = heroData[i];
+    heroFormTitle.textContent = 'Editar diapositiva';
+    heroCategory.value = s.category;
+    heroTitleInput.value = s.title;
+    heroDekInput.value = s.dek;
+    heroCurrentImage = s.image || '';
+    updateHeroImageStatus();
+    heroCurrentColor = s.textColor || 'auto';
+    renderColorPalette();
+    heroHrefInput.value = s.href || '';
+    heroCancelBtn.hidden = false;
+    heroForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetHeroForm() {
+    heroEditIndex = null;
+    heroForm.reset();
+    heroCurrentImage = '';
+    updateHeroImageStatus();
+    heroCurrentColor = 'auto';
+    renderColorPalette();
+    heroFormTitle.textContent = 'Agregar diapositiva';
+    heroCancelBtn.hidden = true;
+  }
+  heroCancelBtn.addEventListener('click', resetHeroForm);
+
+  heroCategory.addEventListener('change', function () {
+    if (heroEditIndex !== null) return;
+    var meta = categoryMeta(heroCategory.value);
+    if (!heroHrefInput.value || heroHrefInput.dataset.auto !== 'false') {
+      heroHrefInput.value = meta.slug + '/index.html';
+      heroHrefInput.dataset.auto = 'true';
+    }
+  });
+  heroHrefInput.addEventListener('input', function () { heroHrefInput.dataset.auto = 'false'; });
+
+  function deleteHero(i) {
+    if (!confirm('¿Eliminar esta diapositiva del carrusel?')) return;
+    heroData.splice(i, 1);
+    saveHero('Diapositiva eliminada');
+  }
+
+  function saveHero(successMsg) {
+    return postJSON('/api/hero', heroData).then(function () {
+      renderHeroList();
+      toast(successMsg || 'Guardado');
+    }).catch(function () {
+      toast('No se pudo guardar. ¿Está corriendo el panel?', true);
+    });
+  }
+
+  heroForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var meta = categoryMeta(heroCategory.value);
+    var slide = {
+      category: heroCategory.value,
+      chip: meta.icon + ' ' + meta.label,
+      title: heroTitleInput.value.trim(),
+      dek: heroDekInput.value.trim(),
+      image: heroCurrentImage,
+      textColor: heroCurrentColor,
+      href: heroHrefInput.value.trim() || (heroCategory.value + '/index.html')
+    };
+    if (heroEditIndex !== null) {
+      heroData[heroEditIndex] = slide;
+    } else {
+      heroData.push(slide);
+    }
+    saveHero(heroEditIndex !== null ? 'Diapositiva actualizada' : 'Diapositiva agregada').then(resetHeroForm);
+  });
+
+  /* =====================================================
+     ARTICLES
+     ===================================================== */
+  var articlesList = document.getElementById('articlesList');
+  var articleForm = document.getElementById('articleForm');
+  var articleFormTitle = document.getElementById('articleFormTitle');
+  var articleCategory = document.getElementById('articleCategory');
+  var articleTopic = document.getElementById('articleTopic');
+  var topicHint = document.getElementById('topicHint');
+  var articlePreviewLink = document.getElementById('articlePreviewLink');
+  var articleDate = document.getElementById('articleDate');
+  var articleTitle = document.getElementById('articleTitle');
+  var articleSlug = document.getElementById('articleSlug');
+  var articleDek = document.getElementById('articleDek');
+  var articleReadTime = document.getElementById('articleReadTime');
+  var articleTrending = document.getElementById('articleTrending');
+  var articleImageUpload = document.getElementById('articleImageUpload');
+  var articleImageStatus = document.getElementById('articleImageStatus');
+  var articleImageRemoveBtn = document.getElementById('articleImageRemoveBtn');
+  var articleVideoUrl = document.getElementById('articleVideoUrl');
+  var articleBody = document.getElementById('articleBody');
+  var inlineImageUpload = document.getElementById('inlineImageUpload');
+  var inlineImageBtn = document.getElementById('inlineImageBtn');
+  var inlineImageStatus = document.getElementById('inlineImageStatus');
+  var articleCurrentImage = '';
+  var newTopicRow = document.getElementById('newTopicRow');
+  var newTopicGroup = document.getElementById('newTopicGroup');
+  var newTopicGroupName = document.getElementById('newTopicGroupName');
+  var newTopicLabel = document.getElementById('newTopicLabel');
+  var newTopicCreateBtn = document.getElementById('newTopicCreateBtn');
+  var topicManager = document.getElementById('topicManager');
+  var subtopicFieldWrap = document.getElementById('subtopicFieldWrap');
+  var articleSubtopic = document.getElementById('articleSubtopic');
+  var newSubtopicRow = document.getElementById('newSubtopicRow');
+  var newSubtopicLabel = document.getElementById('newSubtopicLabel');
+  var newSubtopicCreateBtn = document.getElementById('newSubtopicCreateBtn');
+  var subtopicManager = document.getElementById('subtopicManager');
+  var articleCancelBtn = document.getElementById('articleCancelBtn');
+  var regenerateBtn = document.getElementById('regenerateBtn');
+  var filterName = document.getElementById('filterName');
+  var filterCategory = document.getElementById('filterCategory');
+  var filterTopic = document.getElementById('filterTopic');
+  var filterTrendingOnly = document.getElementById('filterTrendingOnly');
+  var filterCount = document.getElementById('filterCount');
+
+  function slugify(title) {
+    return (title || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60);
+  }
+  articleTitle.addEventListener('input', function () {
+    if (articleSlug.dataset.auto === 'false') return;
+    articleSlug.value = slugify(articleTitle.value);
+    articleSlug.dataset.auto = 'true';
+  });
+  articleSlug.addEventListener('input', function () { articleSlug.dataset.auto = 'false'; });
+
+  function articleHrefFor(a) {
+    if (a.body && a.body.trim()) return 'categoria/' + a.category + '/' + a.slug + '.html';
+    if (a.topic && a.subtopic) return 'categoria/' + a.category + '/' + a.topic + '-' + a.subtopic + '.html';
+    if (a.topic) return 'categoria/' + a.category + '/' + a.topic + '.html';
+    return 'categoria/' + a.category + '/index.html';
+  }
+
+  function updateArticleImageStatus() {
+    articleImageStatus.textContent = articleCurrentImage
+      ? 'Imagen actual: ' + articleCurrentImage.replace(/^img\//, '')
+      : 'Sin imagen (usa el ícono de la categoría).';
+    articleImageRemoveBtn.hidden = !articleCurrentImage;
+  }
+  updateArticleImageStatus();
+
+  articleImageUpload.addEventListener('change', function () {
+    var file = articleImageUpload.files[0];
+    if (!file) return;
+    if (!articleCategory.value) { toast('Elegí primero una categoría', true); return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      articleImageStatus.textContent = 'Subiendo imagen…';
+      postJSON('/api/upload-image', {
+        category: articleCategory.value,
+        filename: file.name,
+        dataBase64: base64
+      }).then(function (result) {
+        articleCurrentImage = result.path;
+        updateArticleImageStatus();
+        toast('Imagen subida');
+      }).catch(function (err) {
+        updateArticleImageStatus();
+        toast(err.message || 'No se pudo subir la imagen', true);
+      }).finally(function () {
+        articleImageUpload.value = '';
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+  articleImageRemoveBtn.addEventListener('click', function () {
+    articleCurrentImage = '';
+    updateArticleImageStatus();
+  });
+
+  /* Imágenes sueltas dentro del cuerpo del artículo (distintas de la
+     imagen destacada de arriba): se suben con el mismo endpoint de
+     siempre y se insertan como "![alt](ruta)" en el cursor del textarea;
+     parseBody/render_article_body (pagegen.js y generate_pages.py) ya
+     saben convertir esa línea en un <figure><img>. */
+  function insertAtCursor(textarea, text) {
+    var start = textarea.selectionStart == null ? textarea.value.length : textarea.selectionStart;
+    var end = textarea.selectionEnd == null ? textarea.value.length : textarea.selectionEnd;
+    var value = textarea.value;
+    textarea.value = value.slice(0, start) + text + value.slice(end);
+    var pos = start + text.length;
+    textarea.selectionStart = textarea.selectionEnd = pos;
+    textarea.focus();
+  }
+
+  inlineImageBtn.addEventListener('click', function () {
+    if (!articleCategory.value) { toast('Elegí primero una categoría', true); return; }
+    inlineImageUpload.click();
+  });
+
+  inlineImageUpload.addEventListener('change', function () {
+    var file = inlineImageUpload.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      inlineImageStatus.textContent = 'Subiendo imagen…';
+      postJSON('/api/upload-image', {
+        category: articleCategory.value,
+        filename: file.name,
+        dataBase64: base64
+      }).then(function (result) {
+        var alt = window.prompt('Descripción de la imagen (opcional, queda como texto alternativo):', '') || '';
+        var markdown = '\n![' + alt.replace(/[\[\]]/g, '') + '](' + result.path + ')\n';
+        insertAtCursor(articleBody, markdown);
+        inlineImageStatus.textContent = 'Imagen insertada: ' + result.path.replace(/^img\//, '');
+        toast('Imagen agregada al cuerpo');
+      }).catch(function (err) {
+        inlineImageStatus.textContent = '';
+        toast(err.message || 'No se pudo subir la imagen', true);
+      }).finally(function () {
+        inlineImageUpload.value = '';
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function refreshTopicOptions(selectSlug) {
+    var topics = topicsByCategory[articleCategory.value] || [];
+    articleTopic.innerHTML = '';
+    var noneOpt = document.createElement('option');
+    noneOpt.value = '';
+    noneOpt.textContent = 'Sin tema específico';
+    articleTopic.appendChild(noneOpt);
+    topics.forEach(function (t) {
+      var opt = document.createElement('option');
+      opt.value = t.slug;
+      opt.textContent = t.label;
+      articleTopic.appendChild(opt);
+    });
+    var newOpt = document.createElement('option');
+    newOpt.value = '__new__';
+    newOpt.textContent = '+ Crear tema nuevo…';
+    articleTopic.appendChild(newOpt);
+    if (selectSlug) articleTopic.value = selectSlug;
+    topicHint.textContent = topics.length
+      ? 'Temas de ' + categoryMeta(articleCategory.value).label + ': ' + topics.map(function (t) { return t.label; }).join(', ') + '.'
+      : 'Esta categoría todavía no tiene temas en data/topics.json. Elegí "+ Crear tema nuevo…" para agregar el primero.';
+  }
+  function refreshGroupsAndTopics() {
+    return getJSON('/api/topic-groups').then(function (groups) {
+      topicGroupsRaw = groups;
+    }).then(function () {
+      return getJSON('/api/topics').then(function (topics) { topicsByCategory = topics; });
+    });
+  }
+
+  function populateNewTopicGroupSelect() {
+    var groupNames = topicGroupsRaw[articleCategory.value] ? topicGroupsRaw[articleCategory.value].map(function (g) { return g[0]; }) : [];
+    newTopicGroup.innerHTML = '';
+    groupNames.forEach(function (name) {
+      var opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      newTopicGroup.appendChild(opt);
+    });
+    var newGroupOpt = document.createElement('option');
+    newGroupOpt.value = '__newgroup__';
+    newGroupOpt.textContent = '+ Crear sección nueva…';
+    newTopicGroup.appendChild(newGroupOpt);
+  }
+  newTopicGroup.addEventListener('change', function () {
+    newTopicGroupName.hidden = newTopicGroup.value !== '__newgroup__';
+    if (!newTopicGroupName.hidden) newTopicGroupName.focus();
+  });
+
+  function renderTopicManager() {
+    var groups = topicGroupsRaw[articleCategory.value] || [];
+    topicManager.innerHTML = '';
+    if (!groups.length) return;
+    groups.forEach(function (group) {
+      var row = document.createElement('div');
+      row.className = 'topic-manager-group';
+      var name = document.createElement('span');
+      name.className = 'group-name';
+      name.textContent = group[0];
+      row.appendChild(name);
+      group[1].forEach(function (pair) {
+        var slug = pair[0], label = pair[1];
+        var category = articleCategory.value;
+        var topicMeta = (topicsByCategory[category] || []).find(function (t) { return t.slug === slug; });
+        var hasThumb = !!(topicMeta && topicMeta.thumb);
+
+        var chip = document.createElement('span');
+        chip.className = 'topic-chip' + (hasThumb ? ' has-thumb' : '');
+        var text = document.createElement('span');
+        text.textContent = label;
+        var renameBtn = document.createElement('button');
+        renameBtn.type = 'button'; renameBtn.title = 'Renombrar'; renameBtn.textContent = '✎';
+        renameBtn.addEventListener('click', function () { renameTopicPrompt(slug, label); });
+
+        var imgInput = document.createElement('input');
+        imgInput.type = 'file'; imgInput.accept = 'image/*'; imgInput.hidden = true;
+        imgInput.addEventListener('change', function () {
+          var file = imgInput.files[0];
+          if (!file) return;
+          uploadTopicImage(category, slug, file);
+        });
+        var imgBtn = document.createElement('button');
+        imgBtn.type = 'button';
+        imgBtn.title = hasThumb ? 'Cambiar imagen del tema' : 'Subir imagen para este tema';
+        imgBtn.textContent = '🖼️';
+        imgBtn.addEventListener('click', function () { imgInput.click(); });
+
+        var delBtn = document.createElement('button');
+        delBtn.type = 'button'; delBtn.title = 'Eliminar tema'; delBtn.textContent = '×'; delBtn.className = 'danger';
+        delBtn.addEventListener('click', function () { deleteTopicConfirm(slug, label); });
+
+        chip.appendChild(text);
+        chip.appendChild(renameBtn);
+        chip.appendChild(imgInput);
+        chip.appendChild(imgBtn);
+        if (hasThumb) {
+          var removeImgBtn = document.createElement('button');
+          removeImgBtn.type = 'button'; removeImgBtn.title = 'Quitar imagen del tema'; removeImgBtn.textContent = '🗑'; removeImgBtn.className = 'danger';
+          removeImgBtn.addEventListener('click', function () { removeTopicImageConfirm(category, slug, label); });
+          chip.appendChild(removeImgBtn);
+        }
+        chip.appendChild(delBtn);
+        row.appendChild(chip);
+      });
+      topicManager.appendChild(row);
+    });
+  }
+
+  function uploadTopicImage(category, slug, file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      toast('Subiendo imagen del tema…');
+      postJSON('/api/upload-topic-image', {
+        category: category, topicSlug: slug, filename: file.name, dataBase64: base64
+      }).then(function () {
+        toast('Imagen del tema guardada');
+        return refreshGroupsAndTopics();
+      }).then(function () {
+        renderTopicManager();
+        return postJSON('/api/regenerate', {});
+      }).catch(function (err) {
+        toast(err.message || 'No se pudo subir la imagen del tema', true);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeTopicImageConfirm(category, slug, label) {
+    if (!window.confirm('¿Quitar la imagen del tema "' + label + '"? Va a volver a mostrar el ícono de la categoría.')) return;
+    deleteJSON('/api/upload-topic-image', { category: category, topicSlug: slug }).then(function () {
+      toast('Imagen del tema eliminada');
+      return refreshGroupsAndTopics();
+    }).then(function () {
+      renderTopicManager();
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo quitar la imagen del tema', true);
+    });
+  }
+
+  function renameTopicPrompt(slug, currentLabel) {
+    var newLabel = window.prompt('Nuevo nombre para "' + currentLabel + '":', currentLabel);
+    if (newLabel === null) return;
+    newLabel = newLabel.trim();
+    if (!newLabel || newLabel === currentLabel) return;
+    apiRequest('PATCH', '/api/topics', { category: articleCategory.value, slug: slug, label: newLabel }).then(function () {
+      toast('Tema renombrado a "' + newLabel + '"');
+      return refreshGroupsAndTopics();
+    }).then(function () {
+      renderTopicManager();
+      refreshTopicOptions(articleTopic.value === slug ? slug : undefined);
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo renombrar el tema', true);
+    });
+  }
+
+  function deleteTopicConfirm(slug, label) {
+    if (!window.confirm('¿Eliminar el tema "' + label + '"? Se borra también su página, si tiene una.')) return;
+    apiRequest('DELETE', '/api/topics', { category: articleCategory.value, slug: slug }).then(function () {
+      toast('Tema "' + label + '" eliminado');
+      return refreshGroupsAndTopics();
+    }).then(function () {
+      renderTopicManager();
+      refreshTopicOptions();
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      if (err.message && err.message.indexOf('todavía usan este tema') !== -1) {
+        toast(err.message, true);
+      } else {
+        toast(err.message || 'No se pudo eliminar el tema', true);
+      }
+    });
+  }
+
+  /* =====================================================
+     SUBTEMAS — un nivel más adentro de un tema (ej. "Brasil" dentro de
+     "History of the World Champions"). Mismo patrón que los temas de
+     arriba, sin grupos (el tema ya cumple ese rol), clave compuesta
+     categoría+tema.
+     ===================================================== */
+  function subtopicKeyFor() { return articleCategory.value + '/' + articleTopic.value; }
+  function hasRealTopicSelected() { return !!articleTopic.value && articleTopic.value !== '__new__'; }
+
+  function refreshSubtopicOptions(selectSlug) {
+    var isReal = hasRealTopicSelected();
+    subtopicFieldWrap.hidden = !isReal;
+    newSubtopicRow.hidden = true;
+    if (!isReal) {
+      articleSubtopic.innerHTML = '';
+      subtopicManager.innerHTML = '';
+      return;
+    }
+    var subtopics = subtopicsByTopicKey[subtopicKeyFor()] || [];
+    articleSubtopic.innerHTML = '';
+    var noneOpt = document.createElement('option');
+    noneOpt.value = '';
+    noneOpt.textContent = 'Sin subtema específico';
+    articleSubtopic.appendChild(noneOpt);
+    subtopics.forEach(function (st) {
+      var opt = document.createElement('option');
+      opt.value = st.slug;
+      opt.textContent = st.label;
+      articleSubtopic.appendChild(opt);
+    });
+    var newOpt = document.createElement('option');
+    newOpt.value = '__new__';
+    newOpt.textContent = '+ Crear subtema nuevo…';
+    articleSubtopic.appendChild(newOpt);
+    if (selectSlug) articleSubtopic.value = selectSlug;
+  }
+
+  function refreshSubtopics() {
+    return getJSON('/api/subtopics').then(function (list) { subtopicsByTopicKey = list; });
+  }
+
+  function renderSubtopicManager() {
+    subtopicManager.innerHTML = '';
+    if (!hasRealTopicSelected()) return;
+    var key = subtopicKeyFor();
+    var category = articleCategory.value;
+    var topicSlug = articleTopic.value;
+    var subtopics = subtopicsByTopicKey[key] || [];
+    if (!subtopics.length) return;
+    var row = document.createElement('div');
+    row.className = 'topic-manager-group';
+    subtopics.forEach(function (st) {
+      var slug = st.slug, label = st.label;
+      var hasThumb = !!st.thumb;
+
+      var chip = document.createElement('span');
+      chip.className = 'topic-chip' + (hasThumb ? ' has-thumb' : '');
+      var text = document.createElement('span');
+      text.textContent = label;
+      var renameBtn = document.createElement('button');
+      renameBtn.type = 'button'; renameBtn.title = 'Renombrar'; renameBtn.textContent = '✎';
+      renameBtn.addEventListener('click', function () { renameSubtopicPrompt(slug, label); });
+
+      var imgInput = document.createElement('input');
+      imgInput.type = 'file'; imgInput.accept = 'image/*'; imgInput.hidden = true;
+      imgInput.addEventListener('change', function () {
+        var file = imgInput.files[0];
+        if (!file) return;
+        uploadSubtopicImage(category, topicSlug, slug, file);
+      });
+      var imgBtn = document.createElement('button');
+      imgBtn.type = 'button';
+      imgBtn.title = hasThumb ? 'Cambiar imagen del subtema' : 'Subir imagen para este subtema';
+      imgBtn.textContent = '🖼️';
+      imgBtn.addEventListener('click', function () { imgInput.click(); });
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.title = 'Eliminar subtema'; delBtn.textContent = '×'; delBtn.className = 'danger';
+      delBtn.addEventListener('click', function () { deleteSubtopicConfirm(slug, label); });
+
+      chip.appendChild(text);
+      chip.appendChild(renameBtn);
+      chip.appendChild(imgInput);
+      chip.appendChild(imgBtn);
+      if (hasThumb) {
+        var removeImgBtn = document.createElement('button');
+        removeImgBtn.type = 'button'; removeImgBtn.title = 'Quitar imagen del subtema'; removeImgBtn.textContent = '🗑'; removeImgBtn.className = 'danger';
+        removeImgBtn.addEventListener('click', function () { removeSubtopicImageConfirm(category, topicSlug, slug, label); });
+        chip.appendChild(removeImgBtn);
+      }
+      chip.appendChild(delBtn);
+      row.appendChild(chip);
+    });
+    subtopicManager.appendChild(row);
+  }
+
+  function uploadSubtopicImage(category, topicSlug, slug, file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      toast('Subiendo imagen del subtema…');
+      postJSON('/api/upload-subtopic-image', {
+        category: category, topicSlug: topicSlug, subtopicSlug: slug, filename: file.name, dataBase64: base64
+      }).then(function () {
+        toast('Imagen del subtema guardada');
+        return refreshSubtopics();
+      }).then(function () {
+        renderSubtopicManager();
+        return postJSON('/api/regenerate', {});
+      }).catch(function (err) {
+        toast(err.message || 'No se pudo subir la imagen del subtema', true);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeSubtopicImageConfirm(category, topicSlug, slug, label) {
+    if (!window.confirm('¿Quitar la imagen del subtema "' + label + '"?')) return;
+    deleteJSON('/api/upload-subtopic-image', { category: category, topicSlug: topicSlug, subtopicSlug: slug }).then(function () {
+      toast('Imagen del subtema eliminada');
+      return refreshSubtopics();
+    }).then(function () {
+      renderSubtopicManager();
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo quitar la imagen del subtema', true);
+    });
+  }
+
+  function renameSubtopicPrompt(slug, currentLabel) {
+    var newLabel = window.prompt('Nuevo nombre para "' + currentLabel + '":', currentLabel);
+    if (newLabel === null) return;
+    newLabel = newLabel.trim();
+    if (!newLabel || newLabel === currentLabel) return;
+    apiRequest('PATCH', '/api/subtopics', { category: articleCategory.value, topic: articleTopic.value, slug: slug, label: newLabel }).then(function () {
+      toast('Subtema renombrado a "' + newLabel + '"');
+      return refreshSubtopics();
+    }).then(function () {
+      renderSubtopicManager();
+      refreshSubtopicOptions(articleSubtopic.value === slug ? slug : undefined);
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo renombrar el subtema', true);
+    });
+  }
+
+  function deleteSubtopicConfirm(slug, label) {
+    if (!window.confirm('¿Eliminar el subtema "' + label + '"? Se borra también su página, si tiene una.')) return;
+    apiRequest('DELETE', '/api/subtopics', { category: articleCategory.value, topic: articleTopic.value, slug: slug }).then(function () {
+      toast('Subtema "' + label + '" eliminado');
+      return refreshSubtopics();
+    }).then(function () {
+      renderSubtopicManager();
+      refreshSubtopicOptions();
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo eliminar el subtema', true);
+    });
+  }
+
+  articleSubtopic.addEventListener('change', function () {
+    newSubtopicRow.hidden = articleSubtopic.value !== '__new__';
+    if (!newSubtopicRow.hidden) newSubtopicLabel.focus();
+  });
+
+  newSubtopicCreateBtn.addEventListener('click', function () {
+    var label = newSubtopicLabel.value.trim();
+    if (!label) { toast('Escribí un nombre para el subtema', true); return; }
+    if (!hasRealTopicSelected()) { toast('Elegí primero un tema', true); return; }
+    newSubtopicCreateBtn.disabled = true;
+    newSubtopicCreateBtn.textContent = 'Creando…';
+    postJSON('/api/subtopics', { category: articleCategory.value, topic: articleTopic.value, label: label }).then(function (result) {
+      return refreshSubtopics().then(function () {
+        refreshSubtopicOptions(result.subtopic.slug);
+        renderSubtopicManager();
+        newSubtopicRow.hidden = true;
+        newSubtopicLabel.value = '';
+        toast('Subtema creado: ' + result.subtopic.label + '. Regenerando sus páginas…');
+        return postJSON('/api/regenerate', {});
+      });
+    }).then(function () {
+      toast('Subtema "' + label + '" listo');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo crear el subtema', true);
+    }).finally(function () {
+      newSubtopicCreateBtn.disabled = false;
+      newSubtopicCreateBtn.textContent = 'Crear subtema';
+    });
+  });
+
+  articleCategory.addEventListener('change', function () {
+    refreshTopicOptions();
+    newTopicRow.hidden = true;
+    populateNewTopicGroupSelect();
+    renderTopicManager();
+    refreshSubtopicOptions();
+    renderSubtopicManager();
+  });
+
+  articleTopic.addEventListener('change', function () {
+    newTopicRow.hidden = articleTopic.value !== '__new__';
+    if (!newTopicRow.hidden) {
+      populateNewTopicGroupSelect();
+      newTopicGroupName.hidden = true;
+      newTopicLabel.focus();
+    }
+    refreshSubtopicOptions();
+    renderSubtopicManager();
+  });
+
+  newTopicCreateBtn.addEventListener('click', function () {
+    var label = newTopicLabel.value.trim();
+    if (!label) { toast('Escribí un nombre para el tema', true); return; }
+    if (!articleCategory.value) { toast('Elegí primero una categoría', true); return; }
+    var group = newTopicGroup.value === '__newgroup__' ? newTopicGroupName.value.trim() : newTopicGroup.value;
+    if (newTopicGroup.value === '__newgroup__' && !group) { toast('Escribí un nombre para la sección nueva', true); return; }
+    newTopicCreateBtn.disabled = true;
+    newTopicCreateBtn.textContent = 'Creando…';
+    postJSON('/api/topics', { category: articleCategory.value, label: label, group: group || undefined }).then(function (result) {
+      return refreshGroupsAndTopics().then(function () {
+        refreshTopicOptions(result.topic.slug);
+        renderTopicManager();
+        newTopicRow.hidden = true;
+        newTopicLabel.value = '';
+        newTopicGroupName.value = '';
+        toast('Tema creado: ' + result.topic.label + '. Regenerando sus páginas…');
+        return postJSON('/api/regenerate', {});
+      });
+    }).then(function () {
+      toast('Tema "' + label + '" listo — ya tiene su página en la categoría');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo crear el tema', true);
+    }).finally(function () {
+      newTopicCreateBtn.disabled = false;
+      newTopicCreateBtn.textContent = 'Crear tema';
+    });
+  });
+
+  regenerateBtn.addEventListener('click', function () {
+    regenerateBtn.disabled = true;
+    regenerateBtn.textContent = 'Regenerando…';
+    postJSON('/api/regenerate', {}).then(function () {
+      toast('Categorías y temas regenerados');
+    }).catch(function () {
+      toast('No se pudo regenerar. ¿Está Python instalado y accesible como "python"?', true);
+    }).finally(function () {
+      regenerateBtn.disabled = false;
+      regenerateBtn.textContent = 'Regenerar categorías y temas';
+    });
+  });
+
+  function refreshFilterTopicOptions() {
+    var topics = topicsByCategory[filterCategory.value] || [];
+    var current = filterTopic.value;
+    filterTopic.innerHTML = '';
+    var noneOpt = document.createElement('option');
+    noneOpt.value = '';
+    noneOpt.textContent = 'Todos los temas';
+    filterTopic.appendChild(noneOpt);
+    topics.forEach(function (t) {
+      var opt = document.createElement('option');
+      opt.value = t.slug;
+      opt.textContent = t.label;
+      filterTopic.appendChild(opt);
+    });
+    filterTopic.disabled = !filterCategory.value;
+    if (topics.some(function (t) { return t.slug === current; })) filterTopic.value = current;
+  }
+
+  function prefillFormFromFilter() {
+    if (articleEditIndex !== null) return; // no tocar un artículo que se está editando
+    if (filterCategory.value) {
+      articleCategory.value = filterCategory.value;
+      refreshTopicOptions();
+      populateNewTopicGroupSelect();
+      renderTopicManager();
+      if (filterTopic.value) articleTopic.value = filterTopic.value;
+      refreshSubtopicOptions();
+      renderSubtopicManager();
+    }
+  }
+
+  filterCategory.addEventListener('change', function () {
+    refreshFilterTopicOptions();
+    renderArticlesList();
+    prefillFormFromFilter();
+  });
+  filterTopic.addEventListener('change', function () {
+    renderArticlesList();
+    prefillFormFromFilter();
+  });
+  filterTrendingOnly.addEventListener('change', renderArticlesList);
+  filterName.addEventListener('input', renderArticlesList);
+
+  function sortedArticlesWithIndex() {
+    var nameQuery = filterName.value.trim().toLowerCase();
+    return articlesData
+      .map(function (a, i) { return { a: a, i: i }; })
+      .filter(function (entry) {
+        if (nameQuery && (entry.a.title || '').toLowerCase().indexOf(nameQuery) === -1) return false;
+        if (filterCategory.value && entry.a.category !== filterCategory.value) return false;
+        if (filterTopic.value && entry.a.topic !== filterTopic.value) return false;
+        if (filterTrendingOnly.checked && !entry.a.trending) return false;
+        return true;
+      })
+      .sort(function (x, y) { return new Date(y.a.date) - new Date(x.a.date); });
+  }
+
+  function toggleTrending(i) {
+    articlesData[i].trending = !articlesData[i].trending;
+    saveArticles(articlesData[i].trending ? 'Marcado como Trending' : 'Quitado de Trending');
+  }
+
+  /* ---- Selección en lote (para borrar varios artículos de una) ---- */
+  var selectedArticleKeys = new Set();
+  var bulkSelectAll = document.getElementById('bulkSelectAll');
+  var bulkSelectedCount = document.getElementById('bulkSelectedCount');
+  var bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+
+  function articleKey(a) { return a.category + '/' + a.slug; }
+
+  function updateBulkBar(visibleEntries) {
+    var count = selectedArticleKeys.size;
+    bulkSelectedCount.textContent = count ? count + ' seleccionado(s)' : '';
+    bulkDeleteBtn.hidden = count === 0;
+    var visibleKeys = visibleEntries.map(function (entry) { return articleKey(entry.a); });
+    bulkSelectAll.checked = visibleKeys.length > 0 && visibleKeys.every(function (k) { return selectedArticleKeys.has(k); });
+  }
+
+  bulkSelectAll.addEventListener('change', function () {
+    var entries = sortedArticlesWithIndex();
+    if (bulkSelectAll.checked) {
+      entries.forEach(function (entry) { selectedArticleKeys.add(articleKey(entry.a)); });
+    } else {
+      entries.forEach(function (entry) { selectedArticleKeys.delete(articleKey(entry.a)); });
+    }
+    renderArticlesList();
+  });
+
+  bulkDeleteBtn.addEventListener('click', function () {
+    var count = selectedArticleKeys.size;
+    if (!count) return;
+    if (!window.confirm('¿Eliminar ' + count + ' artículo(s)? Si tenían página propia, también se borran los archivos .html.')) return;
+    articlesData = articlesData.filter(function (a) { return !selectedArticleKeys.has(articleKey(a)); });
+    selectedArticleKeys.clear();
+    saveArticles(count + ' artículo(s) eliminado(s)');
+  });
+
+  function renderArticlesList() {
+    var entries = sortedArticlesWithIndex();
+    filterCount.textContent = articlesData.length
+      ? entries.length + (entries.length === 1 ? ' artículo' : ' artículos')
+      : '';
+    articlesList.innerHTML = '';
+    updateBulkBar(entries);
+    if (entries.length === 0) {
+      articlesList.innerHTML = '<div class="admin-empty">' +
+        (articlesData.length === 0 ? 'Todavía no hay artículos.' : 'Ningún artículo coincide con este filtro.') +
+        '</div>';
+      return;
+    }
+    entries.forEach(function (entry) {
+      var a = entry.a, i = entry.i;
+      var meta = categoryMeta(a.category);
+      var row = document.createElement('div');
+      row.className = 'admin-item';
+
+      var selectBox = document.createElement('input');
+      selectBox.type = 'checkbox';
+      selectBox.className = 'bulk-select';
+      selectBox.checked = selectedArticleKeys.has(articleKey(a));
+      selectBox.addEventListener('change', function () {
+        if (selectBox.checked) selectedArticleKeys.add(articleKey(a));
+        else selectedArticleKeys.delete(articleKey(a));
+        updateBulkBar(entries);
+      });
+
+      var trendBtn = document.createElement('button');
+      trendBtn.type = 'button';
+      trendBtn.className = 'trend-toggle' + (a.trending ? ' active' : '');
+      trendBtn.title = a.trending ? 'Quitar de Trending' : 'Marcar como Trending';
+      trendBtn.textContent = a.trending ? '⭐' : '☆';
+      trendBtn.addEventListener('click', function () { toggleTrending(i); });
+
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.textContent = a.icon || meta.icon;
+      thumb.style.background = 'var(--surface-2)';
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      info.innerHTML = '<div class="ttl"></div><div class="meta"></div>';
+      info.querySelector('.ttl').textContent = a.title;
+      var topicLabel = a.topic ? (topicsByCategory[a.category] || []).find(function (t) { return t.slug === a.topic; }) : null;
+      var hasPage = !!(a.body && a.body.trim());
+      info.querySelector('.meta').textContent = (a.categoryLabel || meta.label) + (topicLabel ? ' · ' + topicLabel.label : '') + ' · ' + a.date + ' · ' + (a.readTime || '') + (hasPage ? ' · con página propia' : ' · solo en el listado');
+
+      var actions = document.createElement('div');
+      actions.className = 'item-actions';
+      if (hasPage) {
+        var viewBtn = document.createElement('a');
+        viewBtn.href = '/site/' + (a.href || articleHrefFor(a));
+        viewBtn.target = '_blank';
+        viewBtn.rel = 'noopener';
+        viewBtn.textContent = 'Ver';
+        actions.appendChild(viewBtn);
+      }
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button'; editBtn.textContent = 'Editar';
+      editBtn.addEventListener('click', function () { startEditArticle(i); });
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.textContent = 'Eliminar'; delBtn.className = 'danger';
+      delBtn.addEventListener('click', function () { deleteArticle(i); });
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(selectBox);
+      row.appendChild(trendBtn);
+      row.appendChild(thumb);
+      row.appendChild(info);
+      row.appendChild(actions);
+      articlesList.appendChild(row);
+    });
+  }
+
+  function startEditArticle(i) {
+    articleEditIndex = i;
+    var a = articlesData[i];
+    articleFormTitle.textContent = 'Editar artículo';
+    articleCategory.value = a.category;
+    refreshTopicOptions();
+    populateNewTopicGroupSelect();
+    renderTopicManager();
+    newTopicRow.hidden = true;
+    articleTopic.value = a.topic || '';
+    refreshSubtopicOptions(a.subtopic || undefined);
+    renderSubtopicManager();
+    articleDate.value = a.date;
+    articleTitle.value = a.title;
+    articleSlug.value = a.slug || '';
+    articleSlug.dataset.auto = 'false'; // no re-generar el slug solo por editar el título de una nota ya publicada
+    articleDek.value = a.dek || '';
+    articleCurrentImage = a.image || '';
+    updateArticleImageStatus();
+    articleVideoUrl.value = a.videoUrl || '';
+    articleReadTime.value = a.readTime || '';
+    articleTrending.checked = !!a.trending;
+    articleBody.value = a.body || '';
+    inlineImageStatus.textContent = '';
+    articleCancelBtn.hidden = false;
+    articleForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetArticleForm() {
+    articleEditIndex = null;
+    articleForm.reset();
+    refreshTopicOptions();
+    refreshSubtopicOptions();
+    renderSubtopicManager();
+    articleDate.value = todayISO();
+    articleSlug.dataset.auto = 'true';
+    articleCurrentImage = '';
+    updateArticleImageStatus();
+    inlineImageStatus.textContent = '';
+    articleFormTitle.textContent = 'Agregar artículo';
+    articleCancelBtn.hidden = true;
+    prefillFormFromFilter();
+  }
+  articleCancelBtn.addEventListener('click', resetArticleForm);
+
+  function deleteArticle(i) {
+    if (!confirm('¿Eliminar este artículo? Si tenía página propia, también se borra el archivo .html.')) return;
+    selectedArticleKeys.delete(articleKey(articlesData[i]));
+    articlesData.splice(i, 1);
+    saveArticles('Artículo eliminado');
+  }
+
+  function saveArticles(successMsg) {
+    return postJSON('/api/articles', articlesData).then(function (result) {
+      renderArticlesList();
+      if (result && result.errors && result.errors.length) {
+        toast('Guardado, pero falló generar: ' + result.errors.map(function (e) { return e.slug; }).join(', '), true);
+      } else {
+        toast(successMsg || 'Guardado');
+      }
+      return result;
+    }).catch(function () {
+      toast('No se pudo guardar. ¿Está corriendo el panel?', true);
+    });
+  }
+
+  articleForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var meta = categoryMeta(articleCategory.value);
+    var slug = articleSlug.value.trim() || slugify(articleTitle.value);
+    var topicValue = articleTopic.value === '__new__' ? '' : articleTopic.value;
+    var subtopicValue = (topicValue && articleSubtopic.value !== '__new__') ? articleSubtopic.value : '';
+    var article = {
+      title: articleTitle.value.trim(),
+      category: articleCategory.value,
+      categoryLabel: meta.label,
+      icon: meta.icon,
+      date: articleDate.value,
+      readTime: articleReadTime.value.trim(),
+      topic: topicValue,
+      subtopic: subtopicValue,
+      slug: slug,
+      dek: articleDek.value.trim(),
+      image: articleCurrentImage,
+      videoUrl: articleVideoUrl.value.trim(),
+      trending: articleTrending.checked,
+      body: articleBody.value
+    };
+    article.href = articleHrefFor(article);
+    if (articleEditIndex !== null) {
+      articlesData[articleEditIndex] = article;
+    } else {
+      articlesData.push(article);
+    }
+    saveArticles(articleEditIndex !== null ? 'Artículo actualizado' : 'Artículo agregado').then(function () {
+      if (article.body && article.body.trim()) {
+        articlePreviewLink.innerHTML = 'Página publicada: <a href="/site/' + article.href + '" target="_blank" rel="noopener">' + article.href + ' ↗</a>';
+      } else {
+        articlePreviewLink.textContent = '';
+      }
+      resetArticleForm();
+    });
+  });
+
+  function todayISO() {
+    var d = new Date();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+
+  /* =====================================================
+     CATEGORÍAS
+     ===================================================== */
+  var categoriesList = document.getElementById('categoriesList');
+  var categoryForm = document.getElementById('categoryForm');
+  var categoryIconInput = document.getElementById('categoryIconInput');
+  var categoryLabelInput = document.getElementById('categoryLabelInput');
+
+  function renderCategoriesList() {
+    categoriesList.innerHTML = '';
+    if (!categories.length) {
+      categoriesList.innerHTML = '<div class="admin-empty">Todavía no hay categorías.</div>';
+      return;
+    }
+    categories.forEach(function (c) {
+      var row = document.createElement('div');
+      row.className = 'admin-item';
+
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.textContent = c.icon;
+      thumb.style.background = 'var(--surface-2)';
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      info.innerHTML = '<div class="ttl"></div><div class="meta"></div>';
+      info.querySelector('.ttl').textContent = c.label;
+      info.querySelector('.meta').textContent = c.slug;
+
+      var actions = document.createElement('div');
+      actions.className = 'item-actions';
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button'; editBtn.textContent = 'Editar';
+      editBtn.addEventListener('click', function () { editCategoryPrompt(c); });
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.textContent = 'Eliminar'; delBtn.className = 'danger';
+      delBtn.addEventListener('click', function () { deleteCategoryConfirm(c); });
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+
+      row.appendChild(thumb);
+      row.appendChild(info);
+      row.appendChild(actions);
+      categoriesList.appendChild(row);
+    });
+  }
+
+  function refreshFilterCategoryOptionsList() {
+    var current = filterCategory.value;
+    Array.prototype.slice.call(filterCategory.querySelectorAll('option')).forEach(function (opt, i) {
+      if (i > 0) opt.remove();
+    });
+    contentCategories().forEach(function (c) {
+      var opt = document.createElement('option');
+      opt.value = c.slug;
+      opt.textContent = c.icon + ' ' + c.label;
+      filterCategory.appendChild(opt);
+    });
+    if (contentCategories().some(function (c) { return c.slug === current; })) filterCategory.value = current;
+  }
+
+  // Vuelve a pedir /api/categories y refresca todo lo que depende de la
+  // lista (selects de categoría, filtro de "Últimas publicadas", la
+  // lista de esta misma pestaña).
+  function refreshCategories() {
+    return getJSON('/api/categories').then(function (list) {
+      categories = list;
+      renderCategoriesList();
+      fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
+      fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
+      refreshFilterCategoryOptionsList();
+    });
+  }
+
+  function editCategoryPrompt(c) {
+    var newLabel = window.prompt('Nuevo nombre para "' + c.label + '":', c.label);
+    if (newLabel === null) return;
+    newLabel = newLabel.trim();
+    var newIcon = window.prompt('Nuevo ícono para "' + (newLabel || c.label) + '":', c.icon);
+    if (newIcon === null) return;
+    newIcon = newIcon.trim();
+    if (!newLabel && !newIcon) return;
+    apiRequest('PATCH', '/api/categories', { slug: c.slug, label: newLabel, icon: newIcon }).then(function () {
+      toast('Categoría actualizada. Regenerando sus páginas…');
+      return refreshCategories();
+    }).then(function () {
+      return postJSON('/api/regenerate', {});
+    }).then(function () {
+      toast('Categoría actualizada');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo actualizar la categoría', true);
+    });
+  }
+
+  function deleteCategoryConfirm(c) {
+    if (!window.confirm('¿Eliminar la categoría "' + c.label + '"? Esto borra también la carpeta categoria/' + c.slug + '/.')) return;
+    deleteJSON('/api/categories', { slug: c.slug }).then(function () {
+      toast('Categoría "' + c.label + '" eliminada');
+      return refreshCategories();
+    }).then(function () {
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo eliminar la categoría', true);
+    });
+  }
+
+  categoryForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var label = categoryLabelInput.value.trim();
+    if (!label) { toast('Escribí un nombre para la categoría', true); return; }
+    var icon = categoryIconInput.value.trim() || '📰';
+    postJSON('/api/categories', { label: label, icon: icon }).then(function () {
+      toast('Categoría creada. Regenerando su página…');
+      return refreshCategories();
+    }).then(function () {
+      categoryForm.reset();
+      categoryIconInput.value = '📰';
+      return postJSON('/api/regenerate', {});
+    }).then(function () {
+      toast('Categoría "' + label + '" lista');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo crear la categoría', true);
+    });
+  });
+
+  /* ---- Init ---- */
+  Promise.all([
+    getJSON('/api/categories'),
+    getJSON('/api/topics'),
+    getJSON('/api/topic-groups'),
+    getJSON('/api/hero'),
+    getJSON('/api/articles'),
+    getJSON('/api/subtopics')
+  ]).then(function (results) {
+    categories = results[0];
+    topicsByCategory = results[1];
+    topicGroupsRaw = results[2];
+    heroData = results[3];
+    articlesData = results[4];
+    subtopicsByTopicKey = results[5];
+
+    fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
+    fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
+    refreshTopicOptions();
+    populateNewTopicGroupSelect();
+    renderTopicManager();
+    refreshSubtopicOptions();
+    renderSubtopicManager();
+    renderCategoriesList();
+
+    refreshFilterCategoryOptionsList();
+    refreshFilterTopicOptions();
+
+    articleDate.value = todayISO();
+    renderHeroList();
+    renderArticlesList();
+  }).catch(function () {
+    toast('No se pudo conectar con el panel. Fijate que server.js esté corriendo.', true);
+  });
+})();
