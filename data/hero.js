@@ -14,7 +14,7 @@ const VEXLOW_HERO = [
     "dek": "Brasil conquistó su primer título mundial al vencer 5-2 a Suecia en la final, con destacadas actuaciones de Didí y del joven Pelé.",
     "image": "img/sports/screenshot-2.jpg",
     "textColor": "#0E1116",
-    "href": "http://localhost:4321/site/categoria/sports/1958-suecia.html"
+    "href": "https://www.didyouknowbros.com/categoria/sports/1958-suecia.html"
   },
   {
     "category": "ai",
