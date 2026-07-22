@@ -652,9 +652,25 @@ var server = http.createServer(function (req, res) {
         if (nothingToCommit) {
           return sendJSON(res, 200, { ok: true, nothingToCommit: true, output: 'No había cambios nuevos para publicar.' });
         }
+        // Si el commit falló por otro motivo (por ejemplo, esta PC nunca configuró
+        // "git config user.name/user.email"), no hay que seguir: si igual corremos
+        // git push acá, puede "tener éxito" sin subir nada nuevo (exit 0, "Everything
+        // up-to-date"), y el panel terminaría mostrando "¡Listo!" sin haber publicado
+        // el cambio.
+        if (commit.code !== 0) {
+          return sendJSON(res, 500, {
+            ok: false,
+            error: 'No se pudo hacer commit. En esta PC probablemente falte configurar la identidad de git (corré: git config --global user.name "Tu Nombre" y git config --global user.email "tu@email.com").',
+            output: '--- git add ---\n' + add.output + '\n--- git commit ---\n' + commit.output
+          });
+        }
         var push = await runGit(['push', 'origin', 'main']);
         var full = '--- git add ---\n' + add.output + '\n--- git commit ---\n' + commit.output + '\n--- git push ---\n' + push.output;
-        return sendJSON(res, push.code === 0 ? 200 : 500, { ok: push.code === 0, output: full });
+        return sendJSON(res, push.code === 0 ? 200 : 500, {
+          ok: push.code === 0,
+          output: full,
+          error: push.code !== 0 ? 'git push falló. Revisá que esta PC tenga permiso de escritura en el repo y esté autenticada con la cuenta correcta de GitHub.' : undefined
+        });
       } catch (e) {
         return sendJSON(res, 500, { ok: false, error: e.message });
       }
