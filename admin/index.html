@@ -28,6 +28,7 @@
     <button type="button" class="admin-tab active" data-tab="hero">Carrusel principal</button>
     <button type="button" class="admin-tab" data-tab="articles">Últimas publicadas</button>
     <button type="button" class="admin-tab" data-tab="categories">Categorías</button>
+    <button type="button" class="admin-tab" data-tab="appearance">Apariencia</button>
   </nav>
 
   <!-- ============ HERO ============ -->
@@ -204,6 +205,29 @@ Para meter una imagen extra en medio del texto, usá el botón de abajo (se inse
       </div>
       <div class="form-actions">
         <button type="submit" class="btn-primary">Agregar categoría</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ============ APARIENCIA ============ -->
+  <section class="admin-panel" id="panel-appearance">
+    <p class="admin-lede">Tamaños de los íconos de categoría y del logo. Se aplica al toque, sin regenerar nada — movés el control, mirás <a href="/site/" target="_blank" rel="noopener">el sitio</a> en otra pestaña, y ajustás hasta que se vea bien.</p>
+
+    <form class="admin-form" id="appearanceForm">
+      <div class="form-grid">
+        <label class="span-2">Ícono en el menú lateral: <span id="catIconSizeValue"></span>px
+          <input type="range" id="catIconSizeRange" min="16" max="72" step="1">
+        </label>
+        <label class="span-2">Ícono en los chips de "Latest Posts": <span id="catChipIconSizeValue"></span>px
+          <input type="range" id="catChipIconSizeRange" min="14" max="56" step="1">
+        </label>
+        <label class="span-2">Logo (barra superior mobile y footer): <span id="logoHeightValue"></span>px
+          <input type="range" id="logoHeightRange" min="24" max="140" step="1">
+        </label>
+      </div>
+      <p class="admin-hint">El logo del sidebar (arriba de todo, a la izquierda) siempre ocupa todo el ancho disponible, así que no tiene control de tamaño acá.</p>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Guardar tamaños</button>
       </div>
     </form>
   </section>

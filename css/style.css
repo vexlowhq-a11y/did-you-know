@@ -47,6 +47,11 @@
   --radius-s: 6px;
   --radius-m: 10px;
   --radius-l: 18px;
+  /* Tamaños ajustables desde el panel (Apariencia) — no tocar el nombre
+     de estas variables, admin/server.js las busca por texto para editarlas. */
+  --cat-icon-size: 36px;
+  --cat-chip-icon-size: 28px;
+  --logo-height: 64px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -189,10 +194,16 @@ html { scroll-behavior: smooth; }
   padding: 8px 14px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   box-shadow: var(--shadow);
 }
-.logo-chip img { height: 64px; width: auto; border-radius: 8px; }
+.logo-chip img { height: var(--logo-height); width: auto; max-width: 100%; border-radius: 8px; }
+/* En el sidebar (y solo ahí) el logo estira para ocupar todo el ancho
+   disponible en vez de tener una altura fija — es la "zona izquierda"
+   donde queremos que se note bien. */
+.brand-row .logo-chip { display: flex; width: 100%; }
+.brand-row .logo-chip img { width: 100%; height: auto; max-width: none; }
 .logo-chip-text {
   font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: 800;
@@ -295,13 +306,13 @@ html { scroll-behavior: smooth; }
   color: var(--text);
 }
 .cat-link:hover { background: var(--surface-2); }
-.cat-link .ic { font-size: 15px; width: 36px; text-align: center; }
+.cat-link .ic { font-size: 15px; width: var(--cat-icon-size); text-align: center; }
 .cat-link.active { background: var(--blue-tint); color: var(--blue); }
 .cat-icon-img {
-  width: 28px; height: 28px; object-fit: contain;
-  vertical-align: -8px; display: inline-block; border-radius: 6px;
+  width: var(--cat-chip-icon-size); height: var(--cat-chip-icon-size); object-fit: contain;
+  vertical-align: middle; display: inline-block; border-radius: 6px;
 }
-.cat-link .cat-icon-img { width: 36px; height: 36px; vertical-align: -10px; }
+.cat-link .cat-icon-img { width: var(--cat-icon-size); height: var(--cat-icon-size); }
 .cat-expand {
   border: none;
   background: transparent;

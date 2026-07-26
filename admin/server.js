@@ -24,7 +24,43 @@ const ROOT = path.join(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
 const IMG_DIR = path.join(ROOT, 'img');
 const ADMIN_DIR = __dirname;
+const CSS_FILE = path.join(ROOT, 'css', 'style.css');
 const PORT = 4321;
+
+// Tamaños de íconos/logo ajustables desde la pestaña "Apariencia" del
+// panel: viven como variables CSS en el :root de css/style.css, así el
+// cambio se aplica al toque (sin regenerar ninguna página).
+var DISPLAY_SETTINGS_VARS = {
+  catIconSize: '--cat-icon-size',
+  catChipIconSize: '--cat-chip-icon-size',
+  logoHeight: '--logo-height'
+};
+
+function getDisplaySettings() {
+  var css = fs.readFileSync(CSS_FILE, 'utf8');
+  var result = {};
+  Object.keys(DISPLAY_SETTINGS_VARS).forEach(function (key) {
+    var cssVar = DISPLAY_SETTINGS_VARS[key];
+    var re = new RegExp(cssVar.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + ':\\s*(\\d+)px');
+    var m = css.match(re);
+    result[key] = m ? parseInt(m[1], 10) : null;
+  });
+  return result;
+}
+
+function setDisplaySettings(values) {
+  var css = fs.readFileSync(CSS_FILE, 'utf8');
+  Object.keys(DISPLAY_SETTINGS_VARS).forEach(function (key) {
+    if (!(key in values)) return;
+    var n = parseInt(values[key], 10);
+    if (!Number.isFinite(n) || n <= 0) return;
+    var cssVar = DISPLAY_SETTINGS_VARS[key];
+    var re = new RegExp('(' + cssVar.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + ':\\s*)\\d+px');
+    css = css.replace(re, '$1' + n + 'px');
+  });
+  fs.writeFileSync(CSS_FILE, css, 'utf8');
+  return getDisplaySettings();
+}
 
 // Las categorías se pueden agregar/renombrar/borrar desde el panel, así
 // que se leen frescas cada vez en vez de cachearlas al arrancar el server.
@@ -436,6 +472,20 @@ var server = http.createServer(function (req, res) {
       try {
         var removed = pagegen.deleteCategory(slug);
         return sendJSON(res, 200, { ok: true, category: removed });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
+  if (urlPath === '/api/display-settings' && req.method === 'GET') {
+    return sendJSON(res, 200, getDisplaySettings());
+  }
+  if (urlPath === '/api/display-settings' && req.method === 'POST') {
+    return readBody(req, function (err, data) {
+      if (err || !data) return sendJSON(res, 400, { error: 'Faltan datos' });
+      try {
+        var updated = setDisplaySettings(data);
+        return sendJSON(res, 200, { ok: true, settings: updated });
       } catch (e) {
         return sendJSON(res, 400, { error: e.message });
       }

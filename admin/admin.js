@@ -1366,6 +1366,42 @@
     });
   });
 
+  /* =====================================================
+     APARIENCIA — tamaños de íconos/logo, viven como variables CSS en
+     css/style.css. Se aplican al toque, sin regenerar nada.
+     ===================================================== */
+  var appearanceForm = document.getElementById('appearanceForm');
+  var catIconSizeRange = document.getElementById('catIconSizeRange');
+  var catIconSizeValue = document.getElementById('catIconSizeValue');
+  var catChipIconSizeRange = document.getElementById('catChipIconSizeRange');
+  var catChipIconSizeValue = document.getElementById('catChipIconSizeValue');
+  var logoHeightRange = document.getElementById('logoHeightRange');
+  var logoHeightValue = document.getElementById('logoHeightValue');
+
+  function fillAppearanceForm(settings) {
+    if (settings.catIconSize) { catIconSizeRange.value = settings.catIconSize; catIconSizeValue.textContent = settings.catIconSize; }
+    if (settings.catChipIconSize) { catChipIconSizeRange.value = settings.catChipIconSize; catChipIconSizeValue.textContent = settings.catChipIconSize; }
+    if (settings.logoHeight) { logoHeightRange.value = settings.logoHeight; logoHeightValue.textContent = settings.logoHeight; }
+  }
+
+  catIconSizeRange.addEventListener('input', function () { catIconSizeValue.textContent = catIconSizeRange.value; });
+  catChipIconSizeRange.addEventListener('input', function () { catChipIconSizeValue.textContent = catChipIconSizeRange.value; });
+  logoHeightRange.addEventListener('input', function () { logoHeightValue.textContent = logoHeightRange.value; });
+
+  appearanceForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    postJSON('/api/display-settings', {
+      catIconSize: catIconSizeRange.value,
+      catChipIconSize: catChipIconSizeRange.value,
+      logoHeight: logoHeightRange.value
+    }).then(function (result) {
+      fillAppearanceForm(result.settings);
+      toast('Tamaños guardados — ya se ven en el sitio');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudieron guardar los tamaños', true);
+    });
+  });
+
   /* ---- Init ---- */
   Promise.all([
     getJSON('/api/categories'),
@@ -1373,7 +1409,8 @@
     getJSON('/api/topic-groups'),
     getJSON('/api/hero'),
     getJSON('/api/articles'),
-    getJSON('/api/subtopics')
+    getJSON('/api/subtopics'),
+    getJSON('/api/display-settings')
   ]).then(function (results) {
     categories = results[0];
     topicsByCategory = results[1];
@@ -1381,6 +1418,7 @@
     heroData = results[3];
     articlesData = results[4];
     subtopicsByTopicKey = results[5];
+    fillAppearanceForm(results[6]);
 
     fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
     fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
