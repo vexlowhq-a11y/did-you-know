@@ -684,6 +684,26 @@
         [
           "grammys",
           "Grammy Awards"
+        ],
+        [
+          "kpop",
+          "K-Pop"
+        ],
+        [
+          "electronicdancemusicedm",
+          "Electronic Dance Music (EDM)"
+        ],
+        [
+          "rock",
+          "Rock"
+        ],
+        [
+          "latinmusic",
+          "Latin Music"
+        ],
+        [
+          "classicalmusic",
+          "Classical Music"
         ]
       ]
     ],
@@ -719,7 +739,7 @@
         ],
         [
           "mundial",
-          "World Cup"
+          "FIFA World Cup"
         ],
         [
           "laliga",
@@ -730,12 +750,20 @@
           "Copa América"
         ],
         [
-          "historyoftheworldchampions",
-          "History of the World Champions"
-        ],
-        [
           "ligauruguaya",
           "Liga Uruguaya"
+        ],
+        [
+          "uefaeuropeanchampionshipeuro",
+          "UEFA European Championship (Euro)"
+        ],
+        [
+          "fifaclubworldcup",
+          "FIFA Club World Cup"
+        ],
+        [
+          "seriea",
+          "Serie A"
         ]
       ]
     ],
@@ -747,12 +775,16 @@
           "NBA"
         ],
         [
-          "nbafinals",
-          "NBA Finals"
-        ],
-        [
           "basquetinternacional",
           "International Basketball"
+        ],
+        [
+          "fibabasketballworldcup",
+          "FIBA Basketball World Cup"
+        ],
+        [
+          "euroleague",
+          "EuroLeague"
         ]
       ]
     ],
@@ -770,23 +802,156 @@
         [
           "nascar",
           "NASCAR"
+        ],
+        [
+          "worldrallychampionshipwrc",
+          "World Rally Championship (WRC)"
+        ],
+        [
+          "24hoursoflemans",
+          "24 Hours of Le Mans"
+        ],
+        [
+          "rallydakar",
+          "Rally Dakar"
         ]
       ]
     ],
     [
-      "🥊 Other Sports",
+      "Tennis",
       [
         [
-          "ufc",
-          "UFC / MMA"
+          "historia",
+          "Historia"
         ],
         [
-          "tenis",
-          "Tennis"
+          "actualidad",
+          "Latest News"
         ],
         [
-          "juegosolimpicos",
-          "Olympic Games"
+          "grandslam",
+          "Grand Slam"
+        ],
+        [
+          "atptour",
+          "ATP Tour"
+        ],
+        [
+          "wtatour",
+          "WTA Tour"
+        ],
+        [
+          "daviscup",
+          "Davis Cup"
+        ]
+      ]
+    ],
+    [
+      "Badminton",
+      [
+        [
+          "history",
+          "History"
+        ],
+        [
+          "bwfworldchampionships",
+          "BWF World Championships"
+        ],
+        [
+          "bwfworldtour",
+          "BWF World Tour"
+        ]
+      ]
+    ],
+    [
+      "Olympic Games",
+      [
+        [
+          "historysasas",
+          "History"
+        ],
+        [
+          "athleticstrackfield",
+          "Athletics (Track & Field)"
+        ],
+        [
+          "swimming",
+          "Swimming"
+        ],
+        [
+          "gymnastics",
+          "Gymnastics"
+        ],
+        [
+          "footballsoccer",
+          "Football (Soccer)"
+        ],
+        [
+          "basketball",
+          "Basketball"
+        ],
+        [
+          "badminton",
+          "Badminton"
+        ],
+        [
+          "judo",
+          "Judo"
+        ],
+        [
+          "volleyball",
+          "Volleyball"
+        ],
+        [
+          "tabletennis",
+          "Table Tennis"
+        ],
+        [
+          "boxing",
+          "Boxing"
+        ]
+      ]
+    ],
+    [
+      "🏏 Cricket",
+      [
+        [
+          "icccricketworldcup",
+          "ICC Cricket World Cup"
+        ],
+        [
+          "indianpremierleagueipl",
+          "Indian Premier League (IPL)"
+        ],
+        [
+          "t20worldcup",
+          "T20 World Cup"
+        ]
+      ]
+    ],
+    [
+      "🏈 American Football",
+      [
+        [
+          "nflnationalfootballleague",
+          "NFL (National Football League)"
+        ],
+        [
+          "superbowl",
+          "Super Bowl"
+        ]
+      ]
+    ],
+    [
+      "🥋 Martial Arts",
+      [
+        [
+          "mixedmartialartsmma",
+          "Mixed Martial Arts (MMA)"
+        ],
+        [
+          "boxingd",
+          "Boxing"
         ]
       ]
     ]
@@ -914,76 +1079,7 @@
       ]
     ]
   ],
-  "guides": [
-    [
-      "💻 Technology",
-      [
-        [
-          "guiasia",
-          "AI Guides"
-        ],
-        [
-          "trucoscelular",
-          "Phone Tips & Tricks"
-        ],
-        [
-          "softwareguias",
-          "Software Guides"
-        ]
-      ]
-    ],
-    [
-      "💰 Money",
-      [
-        [
-          "ganardineroonline",
-          "Making Money Online"
-        ],
-        [
-          "finanzaspersonales",
-          "Personal Finance"
-        ],
-        [
-          "inversionprincipiantes",
-          "Investing for Beginners"
-        ]
-      ]
-    ],
-    [
-      "🏠 Daily Life",
-      [
-        [
-          "productividad",
-          "Productivity"
-        ],
-        [
-          "organizacion",
-          "Organization"
-        ],
-        [
-          "recetasrapidas",
-          "Quick Recipes"
-        ]
-      ]
-    ],
-    [
-      "📈 Marketing & Business",
-      [
-        [
-          "seobasico",
-          "SEO Basics"
-        ],
-        [
-          "redessocialesnegocios",
-          "Social Media for Business"
-        ],
-        [
-          "freelance",
-          "Freelancing"
-        ]
-      ]
-    ]
-  ],
+  "guides": [],
   "social": [
     [
       "📱 Main Platforms",

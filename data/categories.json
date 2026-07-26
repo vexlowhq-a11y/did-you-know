@@ -56,12 +56,6 @@
     "description": "Did you know...? Rankings, surprising facts, inventions, and amazing places."
   },
   {
-    "slug": "guides",
-    "label": "Guides",
-    "icon": "📚",
-    "description": "Content that lasts for years: step-by-step tutorials and guides."
-  },
-  {
     "slug": "social",
     "label": "Social Media",
     "icon": "📱",
@@ -70,12 +64,17 @@
   {
     "slug": "business",
     "label": "Business",
-    "icon": "💰",
+    "icon": "💼",
     "description": "Startups, cryptocurrency, investing, marketing, and the world of business."
   },
   {
-    "slug": "haloween",
-    "label": "Haloween",
-    "icon": "🎃"
+    "slug": "history",
+    "label": "History",
+    "icon": "🏛️"
+  },
+  {
+    "slug": "gastronomy",
+    "label": "Gastronomy",
+    "icon": "🍽️"
   }
 ]
