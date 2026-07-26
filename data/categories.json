@@ -30,7 +30,8 @@
     "slug": "gaming",
     "label": "Gaming",
     "icon": "🎮",
-    "description": "Releases, updates, guides, consoles, and mobile games."
+    "description": "Releases, updates, guides, consoles, and mobile games.",
+    "iconImage": "img/gaming/_category-icon.png"
   },
   {
     "slug": "entertainment",
