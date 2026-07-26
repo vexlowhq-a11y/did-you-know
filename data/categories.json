@@ -23,7 +23,8 @@
     "label": "Science & Space",
     "icon": "🚀",
     "imgFolder": "science-space",
-    "description": "NASA, SpaceX, discoveries, medicine, and nature."
+    "description": "NASA, SpaceX, discoveries, medicine, and nature.",
+    "iconImage": "img/science-space/_category-icon.png"
   },
   {
     "slug": "gaming",
