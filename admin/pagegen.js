@@ -44,6 +44,17 @@ function categoryBySlug(slug) {
   return loadCategories().find(function (c) { return c.slug === slug; }) || null;
 }
 
+// Ícono de una categoría: si hay una imagen subida (cat.iconImage) se usa
+// esa, si no el emoji de siempre. "prefix" es el prefijo relativo para
+// llegar a img/ desde donde se esté generando (vacío para lo que se copia
+// tal cual de index.html, '../../' para páginas de artículo/tema/categoría).
+function catIconHtml(cat, prefix) {
+  if (cat.iconImage) {
+    return '<img class="cat-icon-img" src="' + (prefix || '') + cat.iconImage + '" alt="">';
+  }
+  return cat.icon;
+}
+
 function escapeHtml(str) {
   return String(str || '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -321,7 +332,7 @@ function findCatItemBlock(html, slug) {
 function catItemHtml(cat) {
   return '      <div class="cat-item">\n' +
     '        <div class="cat-row">\n' +
-    '          <a class="cat-link" href="categoria/' + cat.slug + '/index.html" data-cat="' + cat.slug + '"><span class="ic">' + cat.icon + '</span>' + escapeHtml(cat.label) + '</a>\n' +
+    '          <a class="cat-link" href="categoria/' + cat.slug + '/index.html" data-cat="' + cat.slug + '"><span class="ic">' + catIconHtml(cat) + '</span>' + escapeHtml(cat.label) + '</a>\n' +
     '        </div>\n' +
     '      </div>\n';
 }
@@ -340,7 +351,7 @@ function insertCategoryIntoIndexHtml(cat) {
   var navCloseLine = startOfLineContaining(html, navEnd - '</nav>'.length);
   html = html.slice(0, navCloseLine) + '\n' + catItemHtml(cat) + html.slice(navCloseLine);
 
-  var chipHtml = '        <button type="button" class="filter-chip" data-filter="' + cat.slug + '">' + cat.icon + ' ' + escapeHtml(cat.label) + '</button>\n';
+  var chipHtml = '        <button type="button" class="filter-chip" data-filter="' + cat.slug + '">' + catIconHtml(cat) + ' ' + escapeHtml(cat.label) + '</button>\n';
   var filterRowClose = html.indexOf('</div>', html.indexOf('id="filterRow"'));
   var filterRowCloseLine = startOfLineContaining(html, filterRowClose);
   html = html.slice(0, filterRowCloseLine) + chipHtml + html.slice(filterRowCloseLine);
@@ -368,8 +379,8 @@ function updateCategoryInIndexHtml(slug, cat) {
     var blockHtml = html.slice(block.start, block.end);
     var after = html.slice(block.end);
     blockHtml = blockHtml.replace(
-      new RegExp('(<a class="cat-link" href="categoria/' + slug + '/index\\.html" data-cat="' + slug + '"><span class="ic">)[^<]*(</span>)[^<]*(</a>)'),
-      '$1' + cat.icon + '$2' + escapeHtml(cat.label) + '$3'
+      new RegExp('(<a class="cat-link" href="categoria/' + slug + '/index\\.html" data-cat="' + slug + '"><span class="ic">)[\\s\\S]*?(</span>)[^<]*(</a>)'),
+      '$1' + catIconHtml(cat) + '$2' + escapeHtml(cat.label) + '$3'
     );
     html = before + blockHtml + after;
   }
@@ -377,8 +388,8 @@ function updateCategoryInIndexHtml(slug, cat) {
   var navEnd = findCategoryNavEnd(html);
   var afterNav = html.slice(navEnd);
   afterNav = afterNav.replace(
-    new RegExp('(data-filter="' + slug + '">)[^<]*(</button>)'),
-    '$1' + cat.icon + ' ' + escapeHtml(cat.label) + '$2'
+    new RegExp('(data-filter="' + slug + '">)[\\s\\S]*?(</button>)'),
+    '$1' + catIconHtml(cat) + ' ' + escapeHtml(cat.label) + '$2'
   );
   afterNav = afterNav.replace(
     new RegExp('(href="categoria/' + slug + '/index\\.html">)[^<]*(</a>)'),
@@ -406,7 +417,7 @@ function removeCategoryFromIndexHtml(slug) {
 
   var navEnd = findCategoryNavEnd(html);
   var afterNav = html.slice(navEnd);
-  afterNav = afterNav.replace(new RegExp('[ \\t]*<button type="button" class="filter-chip" data-filter="' + slug + '">[^<]*</button>\\n?'), '');
+  afterNav = afterNav.replace(new RegExp('[ \\t]*<button type="button" class="filter-chip" data-filter="' + slug + '">[\\s\\S]*?</button>\\n?'), '');
   afterNav = afterNav.replace(new RegExp('[ \\t]*<a href="categoria/' + slug + '/index\\.html">[^<]*</a>\\n?'), '');
   html = html.slice(0, navEnd) + afterNav;
 
@@ -435,6 +446,10 @@ function updateCategory(slug, changes) {
 
   if (changes.label && changes.label.trim()) existing.label = changes.label.trim();
   if (changes.icon && changes.icon.trim()) existing.icon = changes.icon.trim();
+  if (Object.prototype.hasOwnProperty.call(changes, 'iconImage')) {
+    if (changes.iconImage) existing.iconImage = changes.iconImage;
+    else delete existing.iconImage;
+  }
   saveCategories(list);
   updateCategoryInIndexHtml(slug, existing);
   return existing;
@@ -448,6 +463,11 @@ function deleteCategory(slug) {
   var remaining = list.filter(function (c) { return c.slug !== slug; });
   saveCategories(remaining);
   removeCategoryFromIndexHtml(slug);
+
+  if (existing.iconImage) {
+    var iconPath = path.join(ROOT, existing.iconImage);
+    if (fs.existsSync(iconPath)) fs.unlinkSync(iconPath);
+  }
 
   var catDir = path.join(CATEGORIA_DIR, slug);
   if (fs.existsSync(catDir)) fs.rmSync(catDir, { recursive: true, force: true });
@@ -658,7 +678,7 @@ function bannerHtmlFor(article, cat) {
   if (article.image) {
     return '      <div class="article-banner media ' + cat.slug + '" style="background-image:url(\'../../' + article.image + '\');background-size:cover;background-position:center;"></div>\n';
   }
-  return '      <div class="article-banner media ' + cat.slug + '">' + cat.icon + '</div>\n';
+  return '      <div class="article-banner media ' + cat.slug + '">' + catIconHtml(cat, '../../') + '</div>\n';
 }
 
 function generateArticleFile(article) {
@@ -698,7 +718,7 @@ function generateArticleFile(article) {
     dek: article.dek || '',
     catSlug: cat.slug,
     catLabel: cat.label,
-    catIcon: cat.icon,
+    catIcon: catIconHtml(cat, '../../'),
     dateLabel: formatDateEn(article.date),
     readTime: article.readTime || '',
     bannerHtml: bannerHtmlFor(article, cat),

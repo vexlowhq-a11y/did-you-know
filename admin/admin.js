@@ -1199,8 +1199,14 @@
 
       var thumb = document.createElement('div');
       thumb.className = 'thumb';
-      thumb.textContent = c.icon;
-      thumb.style.background = 'var(--surface-2)';
+      if (c.iconImage) {
+        thumb.style.backgroundImage = "url('/site/" + c.iconImage + "')";
+        thumb.style.backgroundSize = 'cover';
+        thumb.style.backgroundPosition = 'center';
+      } else {
+        thumb.textContent = c.icon;
+        thumb.style.background = 'var(--surface-2)';
+      }
 
       var info = document.createElement('div');
       info.className = 'info';
@@ -1213,16 +1219,72 @@
       var editBtn = document.createElement('button');
       editBtn.type = 'button'; editBtn.textContent = 'Editar';
       editBtn.addEventListener('click', function () { editCategoryPrompt(c); });
+
+      var iconInput = document.createElement('input');
+      iconInput.type = 'file'; iconInput.accept = 'image/*'; iconInput.hidden = true;
+      iconInput.addEventListener('change', function () {
+        var file = iconInput.files[0];
+        if (file) uploadCategoryIconFile(c, file);
+      });
+      var iconBtn = document.createElement('button');
+      iconBtn.type = 'button';
+      iconBtn.title = c.iconImage ? 'Cambiar ícono personalizado' : 'Subir ícono personalizado (reemplaza el emoji)';
+      iconBtn.textContent = '🖼️';
+      iconBtn.addEventListener('click', function () { iconInput.click(); });
+
+      actions.appendChild(editBtn);
+      actions.appendChild(iconInput);
+      actions.appendChild(iconBtn);
+      if (c.iconImage) {
+        var removeIconBtn = document.createElement('button');
+        removeIconBtn.type = 'button'; removeIconBtn.title = 'Quitar ícono personalizado (vuelve al emoji)'; removeIconBtn.textContent = '🗑';
+        removeIconBtn.className = 'danger';
+        removeIconBtn.addEventListener('click', function () { removeCategoryIconConfirm(c); });
+        actions.appendChild(removeIconBtn);
+      }
       var delBtn = document.createElement('button');
       delBtn.type = 'button'; delBtn.textContent = 'Eliminar'; delBtn.className = 'danger';
       delBtn.addEventListener('click', function () { deleteCategoryConfirm(c); });
-      actions.appendChild(editBtn);
       actions.appendChild(delBtn);
 
       row.appendChild(thumb);
       row.appendChild(info);
       row.appendChild(actions);
       categoriesList.appendChild(row);
+    });
+  }
+
+  function uploadCategoryIconFile(c, file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      toast('Subiendo ícono…');
+      postJSON('/api/upload-category-icon', { category: c.slug, filename: file.name, dataBase64: base64 }).then(function () {
+        toast('Ícono guardado. Regenerando sus páginas…');
+        return refreshCategories();
+      }).then(function () {
+        return postJSON('/api/regenerate', {});
+      }).then(function () {
+        toast('Ícono de "' + c.label + '" actualizado');
+      }).catch(function (err) {
+        toast(err.message || 'No se pudo subir el ícono', true);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeCategoryIconConfirm(c) {
+    if (!window.confirm('¿Quitar el ícono personalizado de "' + c.label + '"? Vuelve a usar el emoji.')) return;
+    deleteJSON('/api/upload-category-icon', { category: c.slug }).then(function () {
+      toast('Ícono quitado. Regenerando sus páginas…');
+      return refreshCategories();
+    }).then(function () {
+      return postJSON('/api/regenerate', {});
+    }).then(function () {
+      toast('Listo');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo quitar el ícono', true);
     });
   }
 

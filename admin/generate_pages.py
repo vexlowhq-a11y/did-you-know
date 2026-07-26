@@ -49,6 +49,8 @@ for _c in _categories_data:
         _entry["has_note"] = True
     if _c.get("imgFolder"):
         _entry["img_folder"] = _c["imgFolder"]
+    if _c.get("iconImage"):
+        _entry["iconImage"] = _c["iconImage"]
     CATEGORY_SLUGS.append(_entry)
     CATEGORY_LABELS[_c["slug"]] = _c["label"]
     DESCRIPTIONS[_c["slug"]] = _c.get("description") or "Everything about {} on Did You Know?.".format(_c["label"])
@@ -358,6 +360,14 @@ def thumb_or_icon_html(thumb, icon, asset_prefix):
     return '<span class="ic">{}</span>'.format(icon)
 
 
+def cat_icon_html(cat, asset_prefix=""):
+    """ Ícono de una categoría: si hay una imagen subida (cat["iconImage"])
+        se usa esa, si no el emoji de siempre. """
+    if cat.get("iconImage"):
+        return '<img class="cat-icon-img" src="{}{}" alt="">'.format(asset_prefix, cat["iconImage"])
+    return cat["icon"]
+
+
 AD_SLOT_HTML_TPL = '      <div class="ad-slot" style="margin: 30px 0;">{}</div>\n'
 
 
@@ -425,7 +435,7 @@ def banner_html_for(art, cat, asset_prefix):
         ).format(embed_url, art["title"].replace('"', "&quot;"))
     if art.get("image"):
         return '      <div class="article-banner media {}" style="background-image:url(\'{}{}\');background-size:cover;background-position:center;"></div>\n'.format(cat["slug"], asset_prefix, art["image"])
-    return '      <div class="article-banner media {}">{}</div>\n'.format(cat["slug"], cat["icon"])
+    return '      <div class="article-banner media {}">{}</div>\n'.format(cat["slug"], cat_icon_html(cat, asset_prefix))
 
 
 ARTICLE_PAGE_TEMPLATE = """<!DOCTYPE html>
@@ -629,7 +639,7 @@ def generate():
                     thumb = thumbs.get(topic_slug)
                     cards += TOPIC_CARD_TEMPLATE.format(
                         slug=topic_slug, label=topic_label,
-                        thumb_or_icon=thumb_or_icon_html(thumb, cat["icon"], asset_prefix_page),
+                        thumb_or_icon=thumb_or_icon_html(thumb, cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )
                     if topic_slug not in seen:
@@ -650,14 +660,14 @@ def generate():
                 for t in auto_topics:
                     cards += TOPIC_CARD_TEMPLATE.format(
                         slug=t["slug"], label=t["label"],
-                        thumb_or_icon=thumb_or_icon_html(t["thumb"], cat["icon"], asset_prefix_page),
+                        thumb_or_icon=thumb_or_icon_html(t["thumb"], cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )
                 topics_html = TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=strings["topics_we_cover"], topic_cards=cards)
                 flat_topics = auto_topics
 
         page = CATEGORY_PAGE_TEMPLATE.format(
-            label=label, slug=slug, icon=cat["icon"], desc=desc,
+            label=label, slug=slug, icon=cat_icon_html(cat, asset_prefix_page), desc=desc,
             sidebar_block=sidebar_block, footer_block=footer_block,
             note_block=note_html, search_block=search_html, topics_block=topics_html, feed_block=feed_html,
             home=strings["home"], loading=strings["loading"], ad_infeed=strings["ad_infeed"],
@@ -680,7 +690,7 @@ def generate():
                 for sub_slug, sub_label in sub_items:
                     sub_cards += TOPIC_CARD_TEMPLATE.format(
                         slug=t["slug"] + "-" + sub_slug, label=sub_label,
-                        thumb_or_icon=thumb_or_icon_html(sub_thumbs.get(sub_slug), cat["icon"], asset_prefix_page),
+                        thumb_or_icon=thumb_or_icon_html(sub_thumbs.get(sub_slug), cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )
                 content_block = TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=strings["topics_we_cover"], topic_cards=sub_cards)
@@ -689,7 +699,7 @@ def generate():
 
             topic_page = TOPIC_PAGE_TEMPLATE.format(
                 topic_label=t["label"], topic_slug=t["slug"],
-                cat_label=label, cat_slug=slug, cat_icon=cat["icon"],
+                cat_label=label, cat_slug=slug, cat_icon=cat_icon_html(cat, asset_prefix_page),
                 sidebar_block=sidebar_block, footer_block=footer_block,
                 home=strings["home"], loading=strings["loading"], ad_infeed=strings["ad_infeed"],
                 content_block=content_block, subtopic_attr="", parent_crumb="",
@@ -706,7 +716,7 @@ def generate():
             for sub_slug, sub_label in sub_items:
                 sub_page = TOPIC_PAGE_TEMPLATE.format(
                     topic_label=sub_label, topic_slug=t["slug"],
-                    cat_label=label, cat_slug=slug, cat_icon=cat["icon"],
+                    cat_label=label, cat_slug=slug, cat_icon=cat_icon_html(cat, asset_prefix_page),
                     sidebar_block=sidebar_block, footer_block=footer_block,
                     home=strings["home"], loading=strings["loading"], ad_infeed=strings["ad_infeed"],
                     content_block=ARTICLES_GRID_BLOCK.format(latest_news=strings["latest_news"]),
@@ -760,7 +770,7 @@ def generate():
 
         page = ARTICLE_PAGE_TEMPLATE.format(
             title=art["title"], title_short=title_short, dek=art.get("dek", ""),
-            cat_slug=cat["slug"], cat_label=cat["label"], cat_icon=cat["icon"],
+            cat_slug=cat["slug"], cat_label=cat["label"], cat_icon=cat_icon_html(cat, asset_prefix_page),
             date_label=format_date(art["date"]), read_time=art.get("readTime", ""),
             banner_html=banner_html_for(art, cat, asset_prefix_page),
             body_html=render_article_body(body_blocks, strings["ad_inarticle"], asset_prefix_page),

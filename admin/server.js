@@ -259,6 +259,45 @@ function uploadImage(category, filename, dataBase64) {
   return 'img/' + folder + '/' + finalName;
 }
 
+// Ícono de categoría (imagen que reemplaza al emoji): nombre de archivo fijo
+// para no ir acumulando versiones viejas cada vez que se reemplaza.
+function uploadCategoryIcon(categorySlug, filename, dataBase64) {
+  var cat = pagegen.categoryBySlug(categorySlug);
+  if (!cat) throw new Error('Categoría desconocida: ' + categorySlug);
+
+  var buffer = Buffer.from(dataBase64, 'base64');
+  if (buffer.length === 0) throw new Error('El archivo llegó vacío');
+  if (buffer.length > MAX_UPLOAD_BYTES) throw new Error('La imagen pesa más de 8 MB');
+
+  var parts = sanitizeFilename(filename);
+  var folder = cat.imgFolder || cat.slug;
+  var dir = path.join(IMG_DIR, folder);
+  fs.mkdirSync(dir, { recursive: true });
+
+  if (cat.iconImage) {
+    var oldPath = path.join(ROOT, cat.iconImage);
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  }
+
+  var finalName = '_category-icon' + parts.ext;
+  fs.writeFileSync(path.join(dir, finalName), buffer);
+
+  var relPath = 'img/' + folder + '/' + finalName;
+  var updated = pagegen.updateCategory(categorySlug, { iconImage: relPath });
+  return updated.iconImage;
+}
+
+function removeCategoryIcon(categorySlug) {
+  var cat = pagegen.categoryBySlug(categorySlug);
+  if (!cat) throw new Error('Categoría desconocida: ' + categorySlug);
+  if (cat.iconImage) {
+    var fullPath = path.join(ROOT, cat.iconImage);
+    if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+  }
+  pagegen.updateCategory(categorySlug, { iconImage: '' });
+  return true;
+}
+
 var TOPIC_SLUG_RE = /^[a-z0-9-]+$/;
 
 function topicImageDir(category, topicSlug) {
@@ -413,6 +452,32 @@ var server = http.createServer(function (req, res) {
       try {
         var savedPath = uploadImage(data.category, data.filename, data.dataBase64);
         return sendJSON(res, 200, { ok: true, path: savedPath });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
+  if (urlPath === '/api/upload-category-icon' && req.method === 'POST') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.category || !data.filename || !data.dataBase64) {
+        return sendJSON(res, 400, { error: 'Faltan datos (categoría, nombre de archivo o imagen)' });
+      }
+      try {
+        var savedPath = uploadCategoryIcon(data.category, data.filename, data.dataBase64);
+        return sendJSON(res, 200, { ok: true, path: savedPath });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
+  if (urlPath === '/api/upload-category-icon' && req.method === 'DELETE') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.category) {
+        return sendJSON(res, 400, { error: 'Falta la categoría' });
+      }
+      try {
+        removeCategoryIcon(data.category);
+        return sendJSON(res, 200, { ok: true });
       } catch (e) {
         return sendJSON(res, 400, { error: e.message });
       }
