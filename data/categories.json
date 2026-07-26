@@ -42,7 +42,8 @@
     "slug": "sports",
     "label": "Sports",
     "icon": "⚽",
-    "description": "Soccer, the World Cup, NBA, Formula 1, and sports records."
+    "description": "Soccer, the World Cup, NBA, Formula 1, and sports records.",
+    "iconImage": "img/sports/_category-icon.png"
   },
   {
     "slug": "world",
