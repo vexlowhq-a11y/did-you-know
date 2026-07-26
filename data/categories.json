@@ -66,15 +66,5 @@
     "label": "Business",
     "icon": "💼",
     "description": "Startups, cryptocurrency, investing, marketing, and the world of business."
-  },
-  {
-    "slug": "history",
-    "label": "History",
-    "icon": "🏛️"
-  },
-  {
-    "slug": "gastronomy",
-    "label": "Gastronomy",
-    "icon": "🍽️"
   }
 ]
