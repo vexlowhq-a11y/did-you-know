@@ -258,7 +258,6 @@ CATEGORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     </nav>
 
     <div class="category-header">
-      <span class="ic-badge">{icon}</span>
       <div>
         <h1>{icon} {label}</h1>
         <p>{desc}</p>

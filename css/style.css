@@ -49,8 +49,8 @@
   --radius-l: 18px;
   /* Tamaños ajustables desde el panel (Apariencia) — no tocar el nombre
      de estas variables, admin/server.js las busca por texto para editarlas. */
-  --cat-icon-size: 36px;
-  --cat-chip-icon-size: 28px;
+  --cat-icon-size: 44px;
+  --cat-chip-icon-size: 20px;
   --logo-height: 64px;
   color-scheme: light;
 }
@@ -462,7 +462,8 @@ main { min-width: 0; padding: 26px 32px 90px; }
 .category-header .ic-badge .cat-icon-img {
   width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-m); vertical-align: 0;
 }
-.category-header h1 { font-size: 1.7rem; margin-bottom: 6px; }
+.category-header h1 { font-size: 1.7rem; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.category-header h1 .cat-icon-img { flex-shrink: 0; }
 .category-header p { font-size: 13.5px; color: var(--text-muted); max-width: 60ch; }
 .category-header .count {
   font-family: 'IBM Plex Mono', monospace;
