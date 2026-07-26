@@ -577,6 +577,7 @@ main { min-width: 0; padding: 26px 32px 90px; }
   margin-bottom: 18px;
 }
 .section-head h2 { font-size: 1.4rem; display: flex; align-items: center; gap: 9px; }
+.section-head h2 .cat-icon-img { width: var(--cat-icon-size); height: var(--cat-icon-size); }
 .section-head .see-all { font-size: 12.5px; font-weight: 600; color: var(--blue); white-space: nowrap; }
 
 /* Hero — carrusel de destacados */
