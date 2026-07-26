@@ -192,7 +192,7 @@ html { scroll-behavior: smooth; }
   gap: 10px;
   box-shadow: var(--shadow);
 }
-.logo-chip img { height: 42px; width: auto; border-radius: 50%; }
+.logo-chip img { height: 40px; width: auto; border-radius: 6px; }
 .logo-chip-text {
   font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: 800;
@@ -295,11 +295,11 @@ html { scroll-behavior: smooth; }
   color: var(--text);
 }
 .cat-link:hover { background: var(--surface-2); }
-.cat-link .ic { font-size: 15px; width: 18px; text-align: center; }
+.cat-link .ic { font-size: 15px; width: 24px; text-align: center; }
 .cat-link.active { background: var(--blue-tint); color: var(--blue); }
 .cat-icon-img {
-  width: 14px; height: 14px; object-fit: contain;
-  vertical-align: -2px; display: inline-block; border-radius: 3px;
+  width: 24px; height: 24px; object-fit: contain;
+  vertical-align: -6px; display: inline-block; border-radius: 5px;
 }
 .cat-expand {
   border: none;

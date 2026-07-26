@@ -4,67 +4,78 @@
     "label": "Trending",
     "icon": "🌍",
     "hasNote": true,
-    "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends."
+    "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends.",
+    "iconImage": "img/trending/_category-icon.jpg"
   },
   {
     "slug": "ai",
     "label": "AI",
     "icon": "🤖",
-    "description": "Everything about artificial intelligence: new models, tools, tutorials, comparisons, and prompts."
+    "description": "Everything about artificial intelligence: new models, tools, tutorials, comparisons, and prompts.",
+    "iconImage": "img/ai/_category-icon.jpg"
   },
   {
     "slug": "technology",
     "label": "Technology",
     "icon": "💻",
-    "description": "Phones, computers, apps, software, and the gadgets that matter."
+    "description": "Phones, computers, apps, software, and the gadgets that matter.",
+    "iconImage": "img/technology/_category-icon.jpg"
   },
   {
     "slug": "science",
     "label": "Science & Space",
     "icon": "🚀",
     "imgFolder": "science-space",
-    "description": "NASA, SpaceX, discoveries, medicine, and nature."
+    "description": "NASA, SpaceX, discoveries, medicine, and nature.",
+    "iconImage": "img/science-space/_category-icon.jpg"
   },
   {
     "slug": "gaming",
     "label": "Gaming",
     "icon": "🎮",
-    "description": "Releases, updates, guides, consoles, and mobile games."
+    "description": "Releases, updates, guides, consoles, and mobile games.",
+    "iconImage": "img/gaming/_category-icon.jpg"
   },
   {
     "slug": "entertainment",
     "label": "Entertainment",
     "icon": "🎬",
-    "description": "Movies, TV series, streaming, music, and celebrities."
+    "description": "Movies, TV series, streaming, music, and celebrities.",
+    "iconImage": "img/entertainment/_category-icon.jpg"
   },
   {
     "slug": "sports",
     "label": "Sports",
     "icon": "⚽",
-    "description": "Soccer, the World Cup, NBA, Formula 1, and sports records."
+    "description": "Soccer, the World Cup, NBA, Formula 1, and sports records.",
+    "iconImage": "img/sports/_category-icon.jpg"
   },
   {
     "slug": "world",
     "label": "World",
     "icon": "🌎",
-    "description": "Odd news, economy, major events, and culture."
+    "description": "Odd news, economy, major events, and culture.",
+    "iconImage": "img/world/_category-icon.jpg"
   },
   {
     "slug": "curiosities",
     "label": "Curiosities",
     "icon": "💡",
-    "description": "Did you know...? Rankings, surprising facts, inventions, and amazing places."
+    "description": "Did you know...? Rankings, surprising facts, inventions, and amazing places.",
+    "iconImage": "img/curiosities/_category-icon.jpg"
   },
   {
     "slug": "social",
     "label": "Social Media",
     "icon": "📱",
-    "description": "TikTok, Instagram, YouTube, X, Twitch, Discord, and everything happening on social media."
+    "description": "TikTok, Instagram, YouTube, X, Twitch, Discord, and everything happening on social media.",
+    "iconImage": "img/social/_category-icon.jpg"
   },
   {
     "slug": "business",
     "label": "Business",
     "icon": "💼",
-    "description": "Startups, cryptocurrency, investing, marketing, and the world of business."
+    "description": "Startups, cryptocurrency, investing, marketing, and the world of business.",
+    "iconImage": "img/business/_category-icon.jpg"
   }
 ]
