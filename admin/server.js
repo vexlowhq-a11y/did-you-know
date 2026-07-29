@@ -334,6 +334,42 @@ function removeCategoryIcon(categorySlug) {
   return true;
 }
 
+// "Home" no es una categoría (no tiene imgFolder propio) — su ícono se
+// guarda en img/home/.
+function uploadHomeIcon(filename, dataBase64) {
+  var current = pagegen.loadHomeIcon();
+
+  var buffer = Buffer.from(dataBase64, 'base64');
+  if (buffer.length === 0) throw new Error('El archivo llegó vacío');
+  if (buffer.length > MAX_UPLOAD_BYTES) throw new Error('La imagen pesa más de 8 MB');
+
+  var parts = sanitizeFilename(filename);
+  var dir = path.join(IMG_DIR, 'home');
+  fs.mkdirSync(dir, { recursive: true });
+
+  if (current.iconImage) {
+    var oldPath = path.join(ROOT, current.iconImage);
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  }
+
+  var finalName = '_home-icon' + parts.ext;
+  fs.writeFileSync(path.join(dir, finalName), buffer);
+
+  var relPath = 'img/home/' + finalName;
+  var updated = pagegen.updateHomeIcon({ iconImage: relPath });
+  return updated.iconImage;
+}
+
+function removeHomeIcon() {
+  var current = pagegen.loadHomeIcon();
+  if (current.iconImage) {
+    var fullPath = path.join(ROOT, current.iconImage);
+    if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+  }
+  pagegen.updateHomeIcon({ iconImage: '' });
+  return true;
+}
+
 var TOPIC_SLUG_RE = /^[a-z0-9-]+$/;
 
 function topicImageDir(category, topicSlug) {
@@ -527,6 +563,32 @@ var server = http.createServer(function (req, res) {
       }
       try {
         removeCategoryIcon(data.category);
+        return sendJSON(res, 200, { ok: true });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
+  if (urlPath === '/api/home-icon' && req.method === 'GET') {
+    return sendJSON(res, 200, pagegen.loadHomeIcon());
+  }
+  if (urlPath === '/api/upload-home-icon' && req.method === 'POST') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.filename || !data.dataBase64) {
+        return sendJSON(res, 400, { error: 'Faltan datos (nombre de archivo o imagen)' });
+      }
+      try {
+        var savedPath = uploadHomeIcon(data.filename, data.dataBase64);
+        return sendJSON(res, 200, { ok: true, path: savedPath });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
+  if (urlPath === '/api/upload-home-icon' && req.method === 'DELETE') {
+    return readBody(req, function (err, data) {
+      try {
+        removeHomeIcon();
         return sendJSON(res, 200, { ok: true });
       } catch (e) {
         return sendJSON(res, 400, { error: e.message });

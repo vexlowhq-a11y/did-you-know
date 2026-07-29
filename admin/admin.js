@@ -1182,6 +1182,98 @@
   /* =====================================================
      CATEGORÍAS
      ===================================================== */
+  /* =====================================================
+     ÍCONO DE "HOME" — no es una categoría (slug "index" reservado),
+     así que tiene su propio ítem chico arriba de la lista.
+     ===================================================== */
+  var homeIconList = document.getElementById('homeIconList');
+  var homeIconData = { icon: '🏠' };
+
+  function renderHomeIcon() {
+    homeIconList.innerHTML = '';
+    var row = document.createElement('div');
+    row.className = 'admin-item';
+
+    var thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    if (homeIconData.iconImage) {
+      thumb.style.backgroundImage = "url('/site/" + homeIconData.iconImage + "')";
+      thumb.style.backgroundSize = 'cover';
+      thumb.style.backgroundPosition = 'center';
+    } else {
+      thumb.textContent = homeIconData.icon;
+      thumb.style.background = 'var(--surface-2)';
+    }
+
+    var info = document.createElement('div');
+    info.className = 'info';
+    info.innerHTML = '<div class="ttl"></div><div class="meta"></div>';
+    info.querySelector('.ttl').textContent = 'Home';
+    info.querySelector('.meta').textContent = 'index.html';
+
+    var actions = document.createElement('div');
+    actions.className = 'item-actions';
+
+    var iconInput = document.createElement('input');
+    iconInput.type = 'file'; iconInput.accept = 'image/*'; iconInput.hidden = true;
+    iconInput.addEventListener('change', function () {
+      var file = iconInput.files[0];
+      if (file) uploadHomeIconFile(file);
+    });
+    var iconBtn = document.createElement('button');
+    iconBtn.type = 'button';
+    iconBtn.title = homeIconData.iconImage ? 'Cambiar ícono personalizado' : 'Subir ícono personalizado (reemplaza el emoji)';
+    iconBtn.textContent = '🖼️';
+    iconBtn.addEventListener('click', function () { iconInput.click(); });
+
+    actions.appendChild(iconInput);
+    actions.appendChild(iconBtn);
+    if (homeIconData.iconImage) {
+      var removeIconBtn = document.createElement('button');
+      removeIconBtn.type = 'button'; removeIconBtn.title = 'Quitar ícono personalizado (vuelve al emoji)'; removeIconBtn.textContent = '🗑';
+      removeIconBtn.className = 'danger';
+      removeIconBtn.addEventListener('click', function () { removeHomeIconConfirm(); });
+      actions.appendChild(removeIconBtn);
+    }
+
+    row.appendChild(thumb);
+    row.appendChild(info);
+    row.appendChild(actions);
+    homeIconList.appendChild(row);
+  }
+
+  function uploadHomeIconFile(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var dataUrl = reader.result;
+      var base64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+      toast('Subiendo ícono…');
+      postJSON('/api/upload-home-icon', { filename: file.name, dataBase64: base64 }).then(function () {
+        return getJSON('/api/home-icon');
+      }).then(function (data) {
+        homeIconData = data;
+        renderHomeIcon();
+        toast('Ícono de Home actualizado');
+      }).catch(function (err) {
+        toast(err.message || 'No se pudo subir el ícono', true);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeHomeIconConfirm() {
+    if (!window.confirm('¿Quitar el ícono personalizado de "Home"? Vuelve a usar el emoji 🏠.')) return;
+    deleteJSON('/api/upload-home-icon', {}).then(function () {
+      return getJSON('/api/home-icon');
+    }).then(function (data) {
+      homeIconData = data;
+      renderHomeIcon();
+      toast('Listo');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo quitar el ícono', true);
+    });
+  }
+
   var categoriesList = document.getElementById('categoriesList');
   var categoryForm = document.getElementById('categoryForm');
   var categoryIconInput = document.getElementById('categoryIconInput');
@@ -1410,7 +1502,8 @@
     getJSON('/api/hero'),
     getJSON('/api/articles'),
     getJSON('/api/subtopics'),
-    getJSON('/api/display-settings')
+    getJSON('/api/display-settings'),
+    getJSON('/api/home-icon')
   ]).then(function (results) {
     categories = results[0];
     topicsByCategory = results[1];
@@ -1419,6 +1512,8 @@
     articlesData = results[4];
     subtopicsByTopicKey = results[5];
     fillAppearanceForm(results[6]);
+    homeIconData = results[7];
+    renderHomeIcon();
 
     fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
     fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });

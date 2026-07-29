@@ -25,6 +25,7 @@ const ROOT = path.join(__dirname, '..');
 const DATA_DIR = path.join(ROOT, 'data');
 const CATEGORIA_DIR = path.join(ROOT, 'categoria');
 const CATEGORIES_FILE = path.join(DATA_DIR, 'categories.json');
+const HOME_ICON_FILE = path.join(DATA_DIR, 'home-icon.json');
 const INDEX_HTML_FILE = path.join(ROOT, 'index.html');
 
 // Categories are admin-editable (data/categories.json), not hardcoded — read
@@ -53,6 +54,23 @@ function catIconHtml(cat, prefix) {
     return '<img class="cat-icon-img" src="' + (prefix || '') + cat.iconImage + '" alt="">';
   }
   return cat.icon;
+}
+
+// "Home" no es una categoría real (el slug "index" está reservado), así
+// que su ícono vive aparte, en data/home-icon.json, con el mismo patrón
+// emoji-o-imagen que las categorías.
+function loadHomeIcon() {
+  try {
+    return JSON.parse(fs.readFileSync(HOME_ICON_FILE, 'utf8'));
+  } catch (e) {
+    return { icon: '🏠' };
+  }
+}
+function saveHomeIcon(data) {
+  fs.writeFileSync(HOME_ICON_FILE, JSON.stringify(data, null, 2) + '\n', 'utf8');
+}
+function homeIconHtml(prefix) {
+  return catIconHtml(loadHomeIcon(), prefix);
 }
 
 function escapeHtml(str) {
@@ -424,6 +442,24 @@ function removeCategoryFromIndexHtml(slug) {
   writeIndexHtml(html);
 }
 
+// "Home" reutiliza findCatItemBlock con slug "index" (mismo data-cat que
+// ya tiene ese link) — a diferencia de una categoría real, acá nunca se
+// toca el label ("Home" es fijo), solo el ícono.
+function updateHomeIconInIndexHtml(iconHtml) {
+  var html = readIndexHtml();
+  var block = findCatItemBlock(html, 'index');
+  if (!block) throw new Error('No se encontró el ítem "Home" en index.html');
+  var before = html.slice(0, block.start);
+  var blockHtml = html.slice(block.start, block.end);
+  var after = html.slice(block.end);
+  blockHtml = blockHtml.replace(
+    /(<a class="cat-link" href="index\.html" data-cat="index"><span class="ic">)[\s\S]*?(<\/span>)/,
+    '$1' + iconHtml + '$2'
+  );
+  html = before + blockHtml + after;
+  writeIndexHtml(html);
+}
+
 function addCategory(label, icon) {
   if (!label || !label.trim()) throw new Error('El nombre de la categoría no puede estar vacío');
   var slug = slugify(label);
@@ -453,6 +489,17 @@ function updateCategory(slug, changes) {
   saveCategories(list);
   updateCategoryInIndexHtml(slug, existing);
   return existing;
+}
+
+function updateHomeIcon(changes) {
+  var current = loadHomeIcon();
+  if (Object.prototype.hasOwnProperty.call(changes, 'iconImage')) {
+    if (changes.iconImage) current.iconImage = changes.iconImage;
+    else delete current.iconImage;
+  }
+  saveHomeIcon(current);
+  updateHomeIconInIndexHtml(catIconHtml(current));
+  return current;
 }
 
 function deleteCategory(slug) {
@@ -751,6 +798,8 @@ module.exports = {
   addCategory: addCategory,
   updateCategory: updateCategory,
   deleteCategory: deleteCategory,
+  loadHomeIcon: loadHomeIcon,
+  updateHomeIcon: updateHomeIcon,
   loadTopicGroups: loadTopicGroups,
   topicLabelFor: topicLabelFor,
   addTopic: addTopic,
