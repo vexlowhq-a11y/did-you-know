@@ -89,5 +89,11 @@
     "label": "Gastronomy",
     "icon": "📰",
     "iconImage": "img/gastronomy/_category-icon.png"
+  },
+  {
+    "slug": "lifestyle",
+    "label": "Lifestyle",
+    "icon": "📰",
+    "iconImage": "img/lifestyle/_category-icon.png"
   }
 ]
