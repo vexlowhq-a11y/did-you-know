@@ -49,7 +49,7 @@
   --radius-l: 18px;
   /* Tamaños ajustables desde el panel (Apariencia) — no tocar el nombre
      de estas variables, admin/server.js las busca por texto para editarlas. */
-  --cat-icon-size: 45px;
+  --cat-icon-size: 44px;
   --cat-chip-icon-size: 20px;
   --logo-height: 64px;
   color-scheme: light;
