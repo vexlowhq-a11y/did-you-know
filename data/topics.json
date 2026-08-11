@@ -646,27 +646,6 @@
       ]
     ],
     [
-      "🎬 Movies & Series",
-      [
-        [
-          "estrenos",
-          "New Releases"
-        ],
-        [
-          "serieslimitadas",
-          "Limited Series"
-        ],
-        [
-          "oscars",
-          "Oscars"
-        ],
-        [
-          "emmys",
-          "Emmys"
-        ]
-      ]
-    ],
-    [
       "🎵 Music",
       [
         [
@@ -721,6 +700,68 @@
         [
           "modacelebridades",
           "Celebrity Fashion"
+        ]
+      ]
+    ],
+    [
+      "Cinema",
+      [
+        [
+          "allcinema",
+          "All cinema"
+        ],
+        [
+          "history",
+          "History"
+        ],
+        [
+          "actorsandactresses",
+          "Actors and Actresses"
+        ],
+        [
+          "directors",
+          "Directors"
+        ],
+        [
+          "genres",
+          "Genres"
+        ],
+        [
+          "records",
+          "Records"
+        ],
+        [
+          "curiosities",
+          "Curiosities"
+        ],
+        [
+          "rankings",
+          "Rankings"
+        ],
+        [
+          "awards",
+          "Awards"
+        ]
+      ]
+    ],
+    [
+      "Series",
+      [
+        [
+          "newreleases",
+          "New Releases"
+        ],
+        [
+          "limitedseries",
+          "Limited Series"
+        ],
+        [
+          "topseries",
+          "Top series"
+        ],
+        [
+          "awardss",
+          "Awards"
         ]
       ]
     ]
