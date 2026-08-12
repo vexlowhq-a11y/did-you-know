@@ -80,5 +80,31 @@
       "tcaawards",
       "TCA Awards"
     ]
+  ],
+  "entertainment/awardsss": [
+    [
+      "americanmusicawards",
+      "American Music Awards"
+    ],
+    [
+      "billboardmusicawards",
+      "Billboard Music Awards"
+    ],
+    [
+      "britawards",
+      "BRIT Awards"
+    ],
+    [
+      "grammyawards",
+      "Grammy Awards"
+    ],
+    [
+      "latingrammyawards",
+      "Latin Grammy Awards"
+    ],
+    [
+      "mtvvideomusicawards",
+      "MTV Video Music Awards"
+    ]
   ]
 }

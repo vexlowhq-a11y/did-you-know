@@ -621,68 +621,35 @@
   ],
   "entertainment": [
     [
-      "📺 Streaming",
-      [
-        [
-          "netflix",
-          "Netflix"
-        ],
-        [
-          "disneyplus",
-          "Disney+"
-        ],
-        [
-          "hbomax",
-          "HBO Max"
-        ],
-        [
-          "amazonprime",
-          "Amazon Prime Video"
-        ],
-        [
-          "appletv",
-          "Apple TV+"
-        ]
-      ]
-    ],
-    [
       "🎵 Music",
       [
-        [
-          "pop",
-          "Pop"
-        ],
-        [
-          "hiphop",
-          "Hip-Hop & Rap"
-        ],
         [
           "conciertos",
           "Concerts & Tours"
         ],
         [
-          "grammys",
-          "Grammy Awards"
+          "artists",
+          "Artists"
         ],
         [
-          "kpop",
-          "K-Pop"
+          "songsalbums",
+          "Songs & Albums"
         ],
         [
-          "electronicdancemusicedm",
-          "Electronic Dance Music (EDM)"
+          "genress",
+          "Genres Music"
         ],
         [
-          "rock",
-          "Rock"
+          "historys",
+          "History"
         ],
         [
-          "latinmusic",
-          "Latin Music"
+          "awardsss",
+          "Awards"
         ],
         [
-          "classicalmusic",
-          "Classical Music"
+          "trivia",
+          "Trivia"
         ]
       ]
     ],
@@ -692,24 +659,12 @@
         [
           "farandula",
           "Celebrity News"
-        ],
-        [
-          "relacionesfamosos",
-          "Celebrity Relationships"
-        ],
-        [
-          "modacelebridades",
-          "Celebrity Fashion"
         ]
       ]
     ],
     [
       "Cinema",
       [
-        [
-          "allcinema",
-          "All cinema"
-        ],
         [
           "history",
           "History"
@@ -741,6 +696,14 @@
         [
           "awards",
           "Awards"
+        ],
+        [
+          "movies",
+          "Movies"
+        ],
+        [
+          "newreleasess",
+          "New Releases"
         ]
       ]
     ],
@@ -752,16 +715,42 @@
           "New Releases"
         ],
         [
-          "limitedseries",
-          "Limited Series"
-        ],
-        [
           "topseries",
           "Top series"
         ],
         [
           "awardss",
           "Awards"
+        ],
+        [
+          "historya",
+          "History"
+        ],
+        [
+          "recordss",
+          "Records"
+        ],
+        [
+          "curiositiess",
+          "Curiosities"
+        ]
+      ]
+    ],
+    [
+      "Pop Culture",
+      [
+        [
+          "iconicmoments",
+          "Iconic Moments"
+        ]
+      ]
+    ],
+    [
+      "Events & Shows",
+      [
+        [
+          "eventsshows",
+          "Events & Shows"
         ]
       ]
     ]
