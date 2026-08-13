@@ -95,5 +95,11 @@
     "label": "Lifestyle",
     "icon": "📰",
     "iconImage": "img/lifestyle/_category-icon.png"
+  },
+  {
+    "slug": "news",
+    "label": "News",
+    "icon": "📰",
+    "iconImage": "img/news/_category-icon.png"
   }
 ]
