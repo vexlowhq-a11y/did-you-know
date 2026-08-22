@@ -1,88 +1,45 @@
 [
   {
-    "slug": "trending",
-    "label": "Trending",
-    "icon": "🌍",
-    "hasNote": true,
-    "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends.",
-    "iconImage": "img/trending/_category-icon.png"
+    "slug": "news",
+    "label": "News",
+    "icon": "📰",
+    "iconImage": "img/news/_category-icon.png"
+  },
+  {
+    "slug": "trendings",
+    "label": "Trendings",
+    "icon": "📰",
+    "iconImage": "img/trendings/_category-icon.png"
   },
   {
     "slug": "ai",
     "label": "AI",
-    "icon": "🤖",
-    "description": "Everything about artificial intelligence: new models, tools, tutorials, comparisons, and prompts.",
+    "icon": "📰",
     "iconImage": "img/ai/_category-icon.png"
-  },
-  {
-    "slug": "technology",
-    "label": "Technology",
-    "icon": "💻",
-    "description": "Phones, computers, apps, software, and the gadgets that matter.",
-    "iconImage": "img/technology/_category-icon.png"
-  },
-  {
-    "slug": "science",
-    "label": "Science & Space",
-    "icon": "🚀",
-    "imgFolder": "science-space",
-    "description": "NASA, SpaceX, discoveries, medicine, and nature.",
-    "iconImage": "img/science-space/_category-icon.png"
-  },
-  {
-    "slug": "gaming",
-    "label": "Gaming",
-    "icon": "🎮",
-    "description": "Releases, updates, guides, consoles, and mobile games.",
-    "iconImage": "img/gaming/_category-icon.png"
-  },
-  {
-    "slug": "entertainment",
-    "label": "Entertainment",
-    "icon": "🎬",
-    "description": "Movies, TV series, streaming, music, and celebrities.",
-    "iconImage": "img/entertainment/_category-icon.png"
-  },
-  {
-    "slug": "sports",
-    "label": "Sports",
-    "icon": "⚽",
-    "description": "Soccer, the World Cup, NBA, Formula 1, and sports records.",
-    "iconImage": "img/sports/_category-icon.png"
-  },
-  {
-    "slug": "world",
-    "label": "World",
-    "icon": "🌎",
-    "description": "Odd news, economy, major events, and culture.",
-    "iconImage": "img/world/_category-icon.png"
-  },
-  {
-    "slug": "curiosities",
-    "label": "Curiosities",
-    "icon": "💡",
-    "description": "Did you know...? Rankings, surprising facts, inventions, and amazing places.",
-    "iconImage": "img/curiosities/_category-icon.png"
-  },
-  {
-    "slug": "social",
-    "label": "Social Media",
-    "icon": "📱",
-    "description": "TikTok, Instagram, YouTube, X, Twitch, Discord, and everything happening on social media.",
-    "iconImage": "img/social/_category-icon.png"
   },
   {
     "slug": "business",
     "label": "Business",
-    "icon": "💼",
-    "description": "Startups, cryptocurrency, investing, marketing, and the world of business.",
+    "icon": "📰",
     "iconImage": "img/business/_category-icon.png"
   },
   {
-    "slug": "history",
-    "label": "History",
+    "slug": "curiosities",
+    "label": "Curiosities",
     "icon": "📰",
-    "iconImage": "img/history/_category-icon.png"
+    "iconImage": "img/curiosities/_category-icon.png"
+  },
+  {
+    "slug": "entertainment",
+    "label": "Entertainment",
+    "icon": "📰",
+    "iconImage": "img/entertainment/_category-icon.png"
+  },
+  {
+    "slug": "gaming",
+    "label": "Gaming",
+    "icon": "📰",
+    "iconImage": "img/gaming/_category-icon.png"
   },
   {
     "slug": "gastronomy",
@@ -91,15 +48,45 @@
     "iconImage": "img/gastronomy/_category-icon.png"
   },
   {
-    "slug": "lifestyle",
-    "label": "Lifestyle",
+    "slug": "history",
+    "label": "History",
     "icon": "📰",
-    "iconImage": "img/lifestyle/_category-icon.png"
+    "iconImage": "img/history/_category-icon.png"
   },
   {
-    "slug": "news",
-    "label": "News",
+    "slug": "lifesyle",
+    "label": "Lifestyle",
     "icon": "📰",
-    "iconImage": "img/news/_category-icon.png"
+    "iconImage": "img/lifesyle/_category-icon.png"
+  },
+  {
+    "slug": "science-space",
+    "label": "Science & Space",
+    "icon": "📰",
+    "iconImage": "img/science-space/_category-icon.png"
+  },
+  {
+    "slug": "social-media",
+    "label": "Social Media",
+    "icon": "📰",
+    "iconImage": "img/social-media/_category-icon.png"
+  },
+  {
+    "slug": "sports",
+    "label": "Sports",
+    "icon": "📰",
+    "iconImage": "img/sports/_category-icon.png"
+  },
+  {
+    "slug": "tecnology",
+    "label": "Tecnology",
+    "icon": "📰",
+    "iconImage": "img/tecnology/_category-icon.png"
+  },
+  {
+    "slug": "world",
+    "label": "world",
+    "icon": "📰",
+    "iconImage": "img/world/_category-icon.png"
   }
 ]
