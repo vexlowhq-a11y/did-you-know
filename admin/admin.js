@@ -508,6 +508,12 @@
     newGroupOpt.value = '__newgroup__';
     newGroupOpt.textContent = '+ Crear sección nueva…';
     newTopicGroup.appendChild(newGroupOpt);
+    // Si la categoría todavía no tiene ninguna sección, "+ Crear sección
+    // nueva…" queda como única opción, ya seleccionada de entrada — el
+    // select nunca dispara "change" en ese caso, así que hay que
+    // sincronizar el campo de nombre a mano acá también (si no, el campo
+    // para escribir el nombre de la sección nunca se muestra).
+    newTopicGroupName.hidden = newTopicGroup.value !== '__newgroup__';
   }
   newTopicGroup.addEventListener('change', function () {
     newTopicGroupName.hidden = newTopicGroup.value !== '__newgroup__';
@@ -846,7 +852,6 @@
     newTopicRow.hidden = articleTopic.value !== '__new__';
     if (!newTopicRow.hidden) {
       populateNewTopicGroupSelect();
-      newTopicGroupName.hidden = true;
       newTopicLabel.focus();
     }
     refreshSubtopicOptions();
