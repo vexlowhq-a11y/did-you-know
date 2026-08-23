@@ -673,8 +673,8 @@ main { min-width: 0; padding: 26px 32px 90px; }
 }
 .media.trending { --g1: #3D2A0E; --g2: #0E1116; }
 .media.ai        { --g1: #12294F; --g2: #0E1116; }
-.media.technology{ --g1: #1B2438; --g2: #0E1116; }
-.media.science   { --g1: #10263A; --g2: #0E1116; }
+.media.tecnology { --g1: #1B2438; --g2: #0E1116; }
+.media.science-space { --g1: #10263A; --g2: #0E1116; }
 .media.gaming    { --g1: #2A1440; --g2: #0E1116; }
 .media.entertainment{ --g1: #401432; --g2: #0E1116; }
 .media.sports    { --g1: #103324; --g2: #0E1116; }
