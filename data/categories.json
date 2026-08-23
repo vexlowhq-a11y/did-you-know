@@ -78,17 +78,17 @@
     "iconImage": "img/tecnology/_category-icon.png"
   },
   {
-    "slug": "world",
-    "label": "world",
-    "icon": "📰",
-    "iconImage": "img/world/_category-icon.png"
-  },
-  {
     "slug": "trending",
     "label": "Trending",
     "icon": "🌍",
     "hasNote": true,
     "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends.",
     "iconImage": "img/trending/_category-icon.png"
+  },
+  {
+    "slug": "world",
+    "label": "world",
+    "icon": "📰",
+    "iconImage": "img/world/_category-icon.png"
   }
 ]
