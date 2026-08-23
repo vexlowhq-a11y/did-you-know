@@ -81,12 +81,17 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/tecnology/historia.html</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/world/</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/ai/prueba.html</loc>
+    <loc>https://didyouknow.com/categoria/tecnology/prueba.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
   </url>

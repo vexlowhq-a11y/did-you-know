@@ -9,12 +9,12 @@
 const VEXLOW_ARTICLES = [
   {
     "title": "prueba",
-    "category": "ai",
-    "categoryLabel": "AI",
+    "category": "tecnology",
+    "categoryLabel": "Tecnology",
     "icon": "📰",
     "date": "2026-08-23",
     "readTime": "",
-    "topic": "prueba1",
+    "topic": "",
     "subtopic": "",
     "slug": "prueba",
     "dek": "prueba",
@@ -22,6 +22,6 @@ const VEXLOW_ARTICLES = [
     "videoUrl": "",
     "trending": true,
     "body": "prueba",
-    "href": "categoria/ai/prueba.html"
+    "href": "categoria/tecnology/prueba.html"
   }
 ];

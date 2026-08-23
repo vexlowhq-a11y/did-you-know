@@ -409,11 +409,23 @@ function updateCategoryInIndexHtml(slug, cat) {
     new RegExp('(data-filter="' + slug + '">)[\\s\\S]*?(</button>)'),
     '$1' + catIconHtml(cat) + ' ' + escapeHtml(cat.label) + '$2'
   );
-  afterNav = afterNav.replace(
-    new RegExp('(href="categoria/' + slug + '/index\\.html">)[^<]*(</a>)'),
-    '$1' + escapeHtml(cat.label) + '$2'
-  );
   html = html.slice(0, navEnd) + afterNav;
+
+  // El link del footer se busca solo a partir de "More categories" —
+  // si se buscara en todo el resto del documento, un <a href="categoria/
+  // {slug}/index.html"> de un "Ver todo" en la home (mismo formato de
+  // atributo) podía matchear primero y el footer se quedaba sin
+  // actualizar.
+  var moreCatHeading = html.indexOf('<h4>More categories</h4>');
+  if (moreCatHeading !== -1) {
+    var beforeFooter = html.slice(0, moreCatHeading);
+    var footerPart = html.slice(moreCatHeading);
+    footerPart = footerPart.replace(
+      new RegExp('(href="categoria/' + slug + '/index\\.html">)[^<]*(</a>)'),
+      '$1' + escapeHtml(cat.label) + '$2'
+    );
+    html = beforeFooter + footerPart;
+  }
 
   writeIndexHtml(html);
 }
@@ -442,12 +454,17 @@ function filterChipRange(html, navEnd, slug) {
 }
 
 // Rango del <a> de una categoría en la columna "More categories" del
-// footer — misma razón para buscar solo después del nav.
-function footerLinkRange(html, navEnd, slug) {
+// footer — se busca a partir de "More categories" nada más (no desde
+// que cierra el nav): un <a href="categoria/{slug}/index.html"> con ese
+// mismo formato de atributo también aparece en el "Ver todo →" de la
+// home, así que buscar desde antes puede matchear ese en vez del real.
+function footerLinkRange(html, slug) {
+  var moreCatHeading = html.indexOf('<h4>More categories</h4>');
+  if (moreCatHeading === -1) return null;
   var re = new RegExp('[ \\t]*<a href="categoria/' + slug + '/index\\.html">[^<]*</a>\\n?');
-  var m = re.exec(html.slice(navEnd));
+  var m = re.exec(html.slice(moreCatHeading));
   if (!m) return null;
-  return { start: navEnd + m.index, end: navEnd + m.index + m[0].length };
+  return { start: moreCatHeading + m.index, end: moreCatHeading + m.index + m[0].length };
 }
 
 // Intercambia el contenido de dos rangos no superpuestos del mismo string
@@ -494,9 +511,8 @@ function moveCategory(slug, direction) {
   var chipB = filterChipRange(html, navEnd, neighborSlug);
   if (chipA && chipB) html = swapTextRanges(html, chipA, chipB);
 
-  navEnd = findCategoryNavEnd(html); // por si el swap de arriba movió el largo del string
-  var linkA = footerLinkRange(html, navEnd, slug);
-  var linkB = footerLinkRange(html, navEnd, neighborSlug);
+  var linkA = footerLinkRange(html, slug);
+  var linkB = footerLinkRange(html, neighborSlug);
   if (linkA && linkB) html = swapTextRanges(html, linkA, linkB);
 
   writeIndexHtml(html);
@@ -521,8 +537,18 @@ function removeCategoryFromIndexHtml(slug) {
   var navEnd = findCategoryNavEnd(html);
   var afterNav = html.slice(navEnd);
   afterNav = afterNav.replace(new RegExp('[ \\t]*<button type="button" class="filter-chip" data-filter="' + slug + '">[\\s\\S]*?</button>\\n?'), '');
-  afterNav = afterNav.replace(new RegExp('[ \\t]*<a href="categoria/' + slug + '/index\\.html">[^<]*</a>\\n?'), '');
   html = html.slice(0, navEnd) + afterNav;
+
+  // Igual que en updateCategoryInIndexHtml: el link del footer se busca
+  // solo a partir de "More categories", nunca desde antes, para no
+  // borrar por error un "Ver todo →" de la home que use el mismo href.
+  var moreCatHeading = html.indexOf('<h4>More categories</h4>');
+  if (moreCatHeading !== -1) {
+    var beforeFooter = html.slice(0, moreCatHeading);
+    var footerPart = html.slice(moreCatHeading);
+    footerPart = footerPart.replace(new RegExp('[ \\t]*<a href="categoria/' + slug + '/index\\.html">[^<]*</a>\\n?'), '');
+    html = beforeFooter + footerPart;
+  }
 
   writeIndexHtml(html);
 }
