@@ -123,21 +123,42 @@ function addTopic(categorySlug, label, groupName) {
   var cat = categoryBySlug(categorySlug);
   if (!cat) throw new Error('Categoría desconocida: ' + categorySlug);
 
-  var slug = topicSlugify(label);
-  if (!slug) throw new Error('El nombre del tema no generó un slug válido');
+  var baseSlug = topicSlugify(label);
+  if (!baseSlug) throw new Error('El nombre del tema no generó un slug válido');
 
   var topicsPath = path.join(DATA_DIR, 'topics.json');
   var allGroups = loadTopicGroups();
   var groups = allGroups[categorySlug] || [];
 
-  for (var g = 0; g < groups.length; g++) {
-    var items = groups[g][1];
-    for (var i = 0; i < items.length; i++) {
-      if (items[i][0] === slug) throw new Error('Ya existe un tema con ese nombre en esta categoría');
+  function slugTaken(candidate) {
+    for (var g = 0; g < groups.length; g++) {
+      var items = groups[g][1];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i][0] === candidate) return true;
+      }
     }
+    return false;
   }
 
   var targetName = groupName || '🆕 Nuevos';
+
+  // La página del tema vive en categoria/{categoría}/{slug}.html, así que el
+  // slug tiene que ser único en toda la categoría (no solo dentro de la
+  // sección) para no pisar la página de otro tema. Si el nombre elegido ya
+  // está usado en otra sección (ej. "Historia" en "Deportes" y en "Cine"),
+  // en vez de tirar error le sumamos la sección al slug para diferenciarlos
+  // — la etiqueta que ve el usuario ("Historia") queda igual en las dos.
+  var slug = baseSlug;
+  if (slugTaken(slug)) {
+    var withGroup = baseSlug + '-' + topicSlugify(targetName);
+    slug = withGroup || slug;
+    var n = 2;
+    while (slugTaken(slug)) {
+      slug = (withGroup || baseSlug) + '-' + n;
+      n++;
+    }
+  }
+
   var targetGroup = null;
   for (var g2 = 0; g2 < groups.length; g2++) {
     if (groups[g2][0] === targetName) { targetGroup = groups[g2]; break; }
