@@ -476,6 +476,19 @@ var server = http.createServer(function (req, res) {
       }
     });
   }
+  if (urlPath === '/api/categories/move' && req.method === 'POST') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.slug || (data.direction !== 'up' && data.direction !== 'down')) {
+        return sendJSON(res, 400, { error: 'Faltan datos (slug o dirección up/down)' });
+      }
+      try {
+        var list = pagegen.moveCategory(data.slug, data.direction);
+        return sendJSON(res, 200, { ok: true, categories: list });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
   if (urlPath === '/api/categories' && req.method === 'DELETE') {
     return readBody(req, function (err, data) {
       if (err || !data || !data.slug) {

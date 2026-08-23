@@ -1290,7 +1290,7 @@
       categoriesList.innerHTML = '<div class="admin-empty">Todavía no hay categorías.</div>';
       return;
     }
-    categories.forEach(function (c) {
+    categories.forEach(function (c, i) {
       var row = document.createElement('div');
       row.className = 'admin-item';
 
@@ -1313,6 +1313,18 @@
 
       var actions = document.createElement('div');
       actions.className = 'item-actions';
+
+      var upBtn = document.createElement('button');
+      upBtn.type = 'button'; upBtn.textContent = '▲'; upBtn.title = 'Subir';
+      upBtn.disabled = i === 0;
+      upBtn.addEventListener('click', function () { moveCategoryOrder(c.slug, 'up'); });
+      var downBtn = document.createElement('button');
+      downBtn.type = 'button'; downBtn.textContent = '▼'; downBtn.title = 'Bajar';
+      downBtn.disabled = i === categories.length - 1;
+      downBtn.addEventListener('click', function () { moveCategoryOrder(c.slug, 'down'); });
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+
       var editBtn = document.createElement('button');
       editBtn.type = 'button'; editBtn.textContent = 'Editar';
       editBtn.addEventListener('click', function () { editCategoryPrompt(c); });
@@ -1348,6 +1360,18 @@
       row.appendChild(info);
       row.appendChild(actions);
       categoriesList.appendChild(row);
+    });
+  }
+
+  function moveCategoryOrder(slug, direction) {
+    postJSON('/api/categories/move', { slug: slug, direction: direction }).then(function (result) {
+      categories = result.categories;
+      renderCategoriesList();
+      return postJSON('/api/regenerate', {});
+    }).then(function () {
+      toast('Orden actualizado');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo mover la categoría', true);
     });
   }
 

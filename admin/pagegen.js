@@ -418,6 +418,91 @@ function updateCategoryInIndexHtml(slug, cat) {
   writeIndexHtml(html);
 }
 
+// Rango {start,end} del bloque .cat-item completo de una categoría,
+// incluyendo su línea de principio a fin (para que al intercambiar dos
+// bloques no se muevan también los separadores en blanco entre ítems —
+// esos quedan fijos en su posición, solo cambia el contenido).
+function catItemRange(html, slug) {
+  var block = findCatItemBlock(html, slug);
+  if (!block) return null;
+  var start = startOfLineContaining(html, block.start);
+  var end = block.end;
+  if (html[end] === '\n') end++;
+  return { start: start, end: end };
+}
+
+// Rango del <button class="filter-chip"> de una categoría, buscado solo
+// después de que cierra el nav de categorías (así nunca matchea, por
+// error, un link de .cat-sub que use el mismo texto).
+function filterChipRange(html, navEnd, slug) {
+  var re = new RegExp('[ \\t]*<button type="button" class="filter-chip" data-filter="' + slug + '">[\\s\\S]*?</button>\\n?');
+  var m = re.exec(html.slice(navEnd));
+  if (!m) return null;
+  return { start: navEnd + m.index, end: navEnd + m.index + m[0].length };
+}
+
+// Rango del <a> de una categoría en la columna "More categories" del
+// footer — misma razón para buscar solo después del nav.
+function footerLinkRange(html, navEnd, slug) {
+  var re = new RegExp('[ \\t]*<a href="categoria/' + slug + '/index\\.html">[^<]*</a>\\n?');
+  var m = re.exec(html.slice(navEnd));
+  if (!m) return null;
+  return { start: navEnd + m.index, end: navEnd + m.index + m[0].length };
+}
+
+// Intercambia el contenido de dos rangos no superpuestos del mismo string
+// (da igual cuál venga primero en el texto).
+function swapTextRanges(html, rangeA, rangeB) {
+  if (rangeA.start > rangeB.start) { var tmp = rangeA; rangeA = rangeB; rangeB = tmp; }
+  var before = html.slice(0, rangeA.start);
+  var aText = html.slice(rangeA.start, rangeA.end);
+  var between = html.slice(rangeA.end, rangeB.start);
+  var bText = html.slice(rangeB.start, rangeB.end);
+  var after = html.slice(rangeB.end);
+  return before + bText + between + aText + after;
+}
+
+// Mueve una categoría un lugar hacia arriba o abajo en data/categories.json
+// y en las tres listas de index.html (nav lateral, chips de "Latest
+// Posts" y footer) — intercambia de lugar con la categoría vecina en esa
+// dirección. No reordena nada dentro de un mismo bloque (por ejemplo los
+// sub-links decorativos de .cat-sub viajan pegados a su cat-item).
+function moveCategory(slug, direction) {
+  var list = loadCategories();
+  var idx = list.findIndex(function (c) { return c.slug === slug; });
+  if (idx === -1) throw new Error('No se encontró esa categoría');
+
+  var targetIdx = idx + (direction === 'up' ? -1 : 1);
+  if (targetIdx < 0 || targetIdx >= list.length) {
+    throw new Error(direction === 'up' ? 'Ya es la primera categoría' : 'Ya es la última categoría');
+  }
+
+  var neighborSlug = list[targetIdx].slug;
+  var tmp = list[idx];
+  list[idx] = list[targetIdx];
+  list[targetIdx] = tmp;
+  saveCategories(list);
+
+  var html = readIndexHtml();
+
+  var itemA = catItemRange(html, slug);
+  var itemB = catItemRange(html, neighborSlug);
+  if (itemA && itemB) html = swapTextRanges(html, itemA, itemB);
+
+  var navEnd = findCategoryNavEnd(html);
+  var chipA = filterChipRange(html, navEnd, slug);
+  var chipB = filterChipRange(html, navEnd, neighborSlug);
+  if (chipA && chipB) html = swapTextRanges(html, chipA, chipB);
+
+  navEnd = findCategoryNavEnd(html); // por si el swap de arriba movió el largo del string
+  var linkA = footerLinkRange(html, navEnd, slug);
+  var linkB = footerLinkRange(html, navEnd, neighborSlug);
+  if (linkA && linkB) html = swapTextRanges(html, linkA, linkB);
+
+  writeIndexHtml(html);
+  return list;
+}
+
 function removeCategoryFromIndexHtml(slug) {
   var html = readIndexHtml();
 
@@ -807,6 +892,7 @@ module.exports = {
   addCategory: addCategory,
   updateCategory: updateCategory,
   deleteCategory: deleteCategory,
+  moveCategory: moveCategory,
   loadHomeIcon: loadHomeIcon,
   updateHomeIcon: updateHomeIcon,
   loadTopicGroups: loadTopicGroups,
