@@ -6,6 +6,14 @@
     "iconImage": "img/news/_category-icon.png"
   },
   {
+    "slug": "trending",
+    "label": "Trending",
+    "icon": "🌍",
+    "hasNote": true,
+    "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends.",
+    "iconImage": "img/trending/_category-icon.png"
+  },
+  {
     "slug": "ai",
     "label": "AI",
     "icon": "📰",
@@ -76,14 +84,6 @@
     "label": "Tecnology",
     "icon": "📰",
     "iconImage": "img/tecnology/_category-icon.png"
-  },
-  {
-    "slug": "trending",
-    "label": "Trending",
-    "icon": "🌍",
-    "hasNote": true,
-    "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends.",
-    "iconImage": "img/trending/_category-icon.png"
   },
   {
     "slug": "world",

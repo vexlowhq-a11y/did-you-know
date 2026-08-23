@@ -11,6 +11,11 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/trending/</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/ai/</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>daily</changefreq>
@@ -76,14 +81,14 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/trending/</loc>
+    <loc>https://didyouknow.com/categoria/world/</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/world/</loc>
+    <loc>https://didyouknow.com/categoria/ai/prueba.html</loc>
     <lastmod>2026-08-23</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/about-didyouknow.html</loc>
