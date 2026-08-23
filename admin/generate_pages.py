@@ -268,10 +268,6 @@ CATEGORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 {search_block}
 {topics_block}
 {feed_block}
-    <div class="home-section" style="margin-top: 32px;">
-      <div class="ad-slot">{ad_infeed}</div>
-    </div>
-
 {footer_block}
 
   </main>
@@ -325,10 +321,6 @@ TOPIC_PAGE_TEMPLATE = """<!DOCTYPE html>
     </div>
 
 {content_block}
-    <div class="home-section" style="margin-top: 32px;">
-      <div class="ad-slot">{ad_infeed}</div>
-    </div>
-
 {footer_block}
 
   </main>
@@ -669,7 +661,7 @@ def generate():
             label=label, slug=slug, icon=cat_icon_html(cat, asset_prefix_page), desc=desc,
             sidebar_block=sidebar_block, footer_block=footer_block,
             note_block=note_html, search_block=search_html, topics_block=topics_html, feed_block=feed_html,
-            home=strings["home"], loading=strings["loading"], ad_infeed=strings["ad_infeed"],
+            home=strings["home"], loading=strings["loading"],
             asset_prefix=asset_prefix_page, articulos_asset=ARTICULOS_ASSET,
         )
         cat_dir = os.path.join(CATEGORIA_DIR, slug)
@@ -700,7 +692,7 @@ def generate():
                 topic_label=t["label"], topic_slug=t["slug"],
                 cat_label=label, cat_slug=slug, cat_icon=cat_icon_html(cat, asset_prefix_page),
                 sidebar_block=sidebar_block, footer_block=footer_block,
-                home=strings["home"], loading=strings["loading"], ad_infeed=strings["ad_infeed"],
+                home=strings["home"], loading=strings["loading"],
                 content_block=content_block, subtopic_attr="", parent_crumb="",
                 everything_about=strings["everything_about"].format(topic=t["label"]),
                 meta_desc=strings["all_coverage_of"].format(topic=t["label"]),
@@ -717,7 +709,7 @@ def generate():
                     topic_label=sub_label, topic_slug=t["slug"],
                     cat_label=label, cat_slug=slug, cat_icon=cat_icon_html(cat, asset_prefix_page),
                     sidebar_block=sidebar_block, footer_block=footer_block,
-                    home=strings["home"], loading=strings["loading"], ad_infeed=strings["ad_infeed"],
+                    home=strings["home"], loading=strings["loading"],
                     content_block=ARTICLES_GRID_BLOCK.format(latest_news=strings["latest_news"]),
                     subtopic_attr=' data-subtopic="{}"'.format(sub_slug), parent_crumb=parent_crumb_html,
                     everything_about=strings["everything_about"].format(topic=sub_label),

@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trendings — Did You Know?</title>
-<meta name="description" content="Everything about Trendings on Did You Know?.">
+<title>Trending — Did You Know?</title>
+<meta name="description" content="The most talked-about stories of the day: viral moments, records, major events, and social media trends.">
 <link rel="stylesheet" href="../../css/style.css">
 <link rel="icon" type="image/svg+xml" href="../../img/favicon.svg">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4351939555314649" crossorigin="anonymous"></script>
 </head>
-<body data-category="trendings">
+<body data-category="trending">
 
 <div class="mobile-topbar">
   <a class="logo-chip" href="../../index.html" aria-label="Go to Did You Know? Home"><img src="../../img/logo.jpg" alt="Did You Know?"></a>
@@ -82,11 +82,7 @@
         </div>
       </div>
 
-      <div class="cat-item">
-        <div class="cat-row">
-          <a class="cat-link" href="../../categoria/trendings/index.html" data-cat="trendings"><span class="ic"><img class="cat-icon-img" src="../../img/trendings/_category-icon.png" alt=""></span>Trendings</a>
-        </div>
-      </div>
+
 
       <div class="cat-item">
         <div class="cat-row">
@@ -165,6 +161,12 @@
           <a class="cat-link" href="../../categoria/world/index.html" data-cat="world"><span class="ic"><img class="cat-icon-img" src="../../img/world/_category-icon.png" alt=""></span>world</a>
         </div>
       </div>
+
+      <div class="cat-item">
+        <div class="cat-row">
+          <a class="cat-link" href="../../categoria/trending/index.html" data-cat="trending"><span class="ic"><img class="cat-icon-img" src="../../img/trending/_category-icon.png" alt=""></span>Trending</a>
+        </div>
+      </div>
     </nav>
 
     <nav class="side-group">
@@ -185,7 +187,7 @@
 
 
         <button type="button" class="filter-chip" data-filter="news"><img class="cat-icon-img" src="../../img/news/_category-icon.png" alt=""> News</button>
-        <button type="button" class="filter-chip" data-filter="trendings"><img class="cat-icon-img" src="../../img/trendings/_category-icon.png" alt=""> Trendings</button>
+
         <button type="button" class="filter-chip" data-filter="ai"><img class="cat-icon-img" src="../../img/ai/_category-icon.png" alt=""> AI</button>
         <button type="button" class="filter-chip" data-filter="business"><img class="cat-icon-img" src="../../img/business/_category-icon.png" alt=""> Business</button>
         <button type="button" class="filter-chip" data-filter="curiosities"><img class="cat-icon-img" src="../../img/curiosities/_category-icon.png" alt=""> Curiosities</button>
@@ -199,6 +201,7 @@
         <button type="button" class="filter-chip" data-filter="sports"><img class="cat-icon-img" src="../../img/sports/_category-icon.png" alt=""> Sports</button>
         <button type="button" class="filter-chip" data-filter="tecnology"><img class="cat-icon-img" src="../../img/tecnology/_category-icon.png" alt=""> Tecnology</button>
         <button type="button" class="filter-chip" data-filter="world"><img class="cat-icon-img" src="../../img/world/_category-icon.png" alt=""> world</button>
+        <button type="button" class="filter-chip" data-filter="trending"><img class="cat-icon-img" src="../../img/trending/_category-icon.png" alt=""> Trending</button>
       </div>
       <div class="latest-list" id="latestList"></div>
     </nav>
@@ -215,22 +218,23 @@
   <main>
 
     <nav class="breadcrumb">
-      <a href="../../index.html">Home</a><span class="sep">/</span><span class="current">Trendings</span>
+      <a href="../../index.html">Home</a><span class="sep">/</span><span class="current">Trending</span>
     </nav>
 
     <div class="category-header">
       <div>
-        <h1><img class="cat-icon-img" src="../../img/trendings/_category-icon.png" alt=""> Trendings</h1>
-        <p>Everything about Trendings on Did You Know?.</p>
+        <h1><img class="cat-icon-img" src="../../img/trending/_category-icon.png" alt=""> Trending</h1>
+        <p>The most talked-about stories of the day: viral moments, records, major events, and social media trends.</p>
         <span class="count" id="categoryCount">Loading…</span>
       </div>
     </div>
+    <p style="font-size:12.5px;color:var(--text-muted);margin:-14px 0 26px;max-width:60ch;">These are the articles marked as Trending from the admin panel. If none are marked yet, you'll see the most recent stories across all categories.</p>
 
 
 
-
-    <div class="home-section" style="margin-top: 32px;">
-      <div class="ad-slot">Advertisement · in-feed responsive</div>
+    <div class="home-section" id="noticias">
+      <div class="section-head"><h2>📰 What's Trending</h2></div>
+      <div class="rail-grid" id="categoryGrid"></div>
     </div>
 
     <footer class="site-footer">
@@ -262,7 +266,7 @@
 
 
           <a href="../../categoria/news/index.html">News</a>
-          <a href="../../categoria/trendings/index.html">Trendings</a>
+
           <a href="../../categoria/ai/index.html">AI</a>
           <a href="../../categoria/business/index.html">Business</a>
           <a href="../../categoria/curiosities/index.html">Curiosities</a>
@@ -276,6 +280,7 @@
           <a href="../../categoria/sports/index.html">Sports</a>
           <a href="../../categoria/tecnology/index.html">Tecnology</a>
           <a href="../../categoria/world/index.html">world</a>
+          <a href="../../categoria/trending/index.html">Trending</a>
         </div>
         <div class="footer-col">
           <h4>Trust</h4>

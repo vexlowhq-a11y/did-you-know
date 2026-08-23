@@ -502,7 +502,16 @@ function updateHomeIcon(changes) {
   return current;
 }
 
+// "trending" es una categoría fija: de ahí sale "Top 5 Trending" de la
+// home y la página que junta todo lo marcado ⭐ Trending sin importar su
+// categoría real (ver pageCategory === 'trending' en js/script.js). Si se
+// borra, esas dos cosas se rompen — no se puede eliminar desde el panel.
+var PROTECTED_CATEGORY_SLUGS = ['trending'];
+
 function deleteCategory(slug) {
+  if (PROTECTED_CATEGORY_SLUGS.indexOf(slug) !== -1) {
+    throw new Error('"Trending" es una categoría fija del sitio (de ahí sale el Top 5 de la home) y no se puede eliminar.');
+  }
   var list = loadCategories();
   var existing = list.find(function (c) { return c.slug === slug; });
   if (!existing) throw new Error('No se encontró esa categoría');

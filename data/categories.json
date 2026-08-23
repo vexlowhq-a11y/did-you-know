@@ -6,12 +6,6 @@
     "iconImage": "img/news/_category-icon.png"
   },
   {
-    "slug": "trendings",
-    "label": "Trendings",
-    "icon": "📰",
-    "iconImage": "img/trendings/_category-icon.png"
-  },
-  {
     "slug": "ai",
     "label": "AI",
     "icon": "📰",
@@ -88,5 +82,13 @@
     "label": "world",
     "icon": "📰",
     "iconImage": "img/world/_category-icon.png"
+  },
+  {
+    "slug": "trending",
+    "label": "Trending",
+    "icon": "🌍",
+    "hasNote": true,
+    "description": "The most talked-about stories of the day: viral moments, records, major events, and social media trends.",
+    "iconImage": "img/trending/_category-icon.png"
   }
 ]
