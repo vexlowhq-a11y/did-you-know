@@ -68,7 +68,7 @@ const VEXLOW_ARTICLES = [
     "topic": "olympicgames",
     "subtopic": "",
     "slug": "olympic-games",
-    "dek": "When it comes to prestige, winning Olympic gold is the greatest achievement a badminton player can reach. Although the World Championships are held more frequently, the Olympic gold medal is considered the most valuable title because the tournament takes place only once every four years and qualification is extremely demanding.",
+    "dek": "",
     "image": "img/sports/imagen-portada-2.png",
     "videoUrl": "",
     "trending": false,
