@@ -14,7 +14,29 @@
   "technology": [],
   "science": [],
   "entertainment": [],
-  "sports": [],
+  "sports": [
+    [
+      "Badminton",
+      [
+        [
+          "badminton",
+          "Badminton"
+        ],
+        [
+          "thebwfworldchampionships",
+          "The BWF World Championships"
+        ],
+        [
+          "bwfworldtour",
+          "BWF World Tour"
+        ],
+        [
+          "olympicgames",
+          "Olympic Games"
+        ]
+      ]
+    ]
+  ],
   "world": [],
   "curiosities": [],
   "guides": [],
