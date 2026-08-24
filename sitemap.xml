@@ -31,6 +31,16 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/business/foodbeverage.html</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/business/foodbeverage-mcdonalds.html</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/curiosities/</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>daily</changefreq>
@@ -138,6 +148,11 @@
   <url>
     <loc>https://didyouknow.com/categoria/sports/olympic-games.html</loc>
     <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/ai/superintelligence.html</loc>
+    <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
   </url>
   <url>
