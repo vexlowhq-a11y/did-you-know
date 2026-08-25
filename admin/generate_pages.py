@@ -665,6 +665,19 @@ def generate():
                     if topic_slug not in seen:
                         seen.add(topic_slug)
                         flat_topics.append({"slug": topic_slug, "label": topic_label, "thumb": thumb})
+                # Artículos guardados directo en la sección (sin tema) — la
+                # "carpeta" Badminton puede tener temas Y artículos sueltos
+                # mezclados, uno al lado del otro.
+                for art in all_articles:
+                    if (art.get("category") != slug or art.get("section") != group_name
+                            or art.get("topic") or not art.get("slug")
+                            or not str(art.get("body") or "").strip()):
+                        continue
+                    cards += TOPIC_CARD_TEMPLATE.format(
+                        slug=art["slug"], label=art.get("title", ""),
+                        thumb_or_icon=thumb_or_icon_html(art.get("image"), cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
+                        view_more=strings["view_more_cards"],
+                    )
                 topics_html += TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=group_name, topic_cards=cards)
             search_html = (
                 '    <div class="topic-search">\n'

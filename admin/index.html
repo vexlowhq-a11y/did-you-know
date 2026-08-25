@@ -110,14 +110,22 @@
         <label>Categoría
           <select id="articleCategory" required></select>
         </label>
+        <label>Sección
+          <span class="label-row">
+            <select id="articleSection" required></select>
+            <button type="button" class="btn-icon" id="renameSectionBtn" title="Renombrar sección" hidden>✎</button>
+          </span>
+        </label>
+        <div class="new-topic-row span-2" id="newSectionRow" hidden>
+          <input type="text" id="newSectionName" placeholder="Nombre de la sección nueva (ej. Badminton)">
+          <button type="button" class="btn-secondary" id="newSectionCreateBtn">Crear sección</button>
+        </div>
         <label>Tema (opcional)
           <select id="articleTopic">
             <option value="">Sin tema específico</option>
           </select>
         </label>
         <div class="new-topic-row span-2" id="newTopicRow" hidden>
-          <select id="newTopicGroup"></select>
-          <input type="text" id="newTopicGroupName" placeholder="Nombre de la sección nueva" hidden>
           <input type="text" id="newTopicLabel" placeholder="Nombre del tema nuevo (ej. Starfield)">
           <button type="button" class="btn-secondary" id="newTopicCreateBtn">Crear tema</button>
         </div>

@@ -769,6 +769,19 @@ var server = http.createServer(function (req, res) {
   if (urlPath === '/api/topic-groups' && req.method === 'GET') {
     return sendJSON(res, 200, pagegen.loadTopicGroups());
   }
+  if (urlPath === '/api/sections' && req.method === 'POST') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.category || !data.name) {
+        return sendJSON(res, 400, { error: 'Faltan datos (categoría o nombre de la sección)' });
+      }
+      try {
+        var created = pagegen.addSection(data.category, data.name);
+        return sendJSON(res, 200, { ok: true, section: created });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
   if (urlPath === '/api/topic-groups' && req.method === 'PATCH') {
     return readBody(req, function (err, data) {
       if (err || !data || !data.category || !data.oldName || !data.newName) {

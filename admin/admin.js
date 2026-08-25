@@ -418,6 +418,11 @@
   var articleForm = document.getElementById('articleForm');
   var articleFormTitle = document.getElementById('articleFormTitle');
   var articleCategory = document.getElementById('articleCategory');
+  var articleSection = document.getElementById('articleSection');
+  var renameSectionBtn = document.getElementById('renameSectionBtn');
+  var newSectionRow = document.getElementById('newSectionRow');
+  var newSectionName = document.getElementById('newSectionName');
+  var newSectionCreateBtn = document.getElementById('newSectionCreateBtn');
   var articleTopic = document.getElementById('articleTopic');
   var topicHint = document.getElementById('topicHint');
   var articlePreviewLink = document.getElementById('articlePreviewLink');
@@ -437,8 +442,6 @@
   var inlineImageStatus = document.getElementById('inlineImageStatus');
   var articleCurrentImage = '';
   var newTopicRow = document.getElementById('newTopicRow');
-  var newTopicGroup = document.getElementById('newTopicGroup');
-  var newTopicGroupName = document.getElementById('newTopicGroupName');
   var newTopicLabel = document.getElementById('newTopicLabel');
   var newTopicCreateBtn = document.getElementById('newTopicCreateBtn');
   var topicManager = document.getElementById('topicManager');
@@ -565,12 +568,27 @@
     reader.readAsDataURL(file);
   });
 
+  // Temas de la SECCIÓN elegida nada más — un tema es una sub-carpeta
+  // adentro de una sección, así que no tiene sentido ofrecer temas de
+  // otras secciones acá.
+  function topicsInCurrentSection() {
+    var groups = topicGroupsRaw[articleCategory.value] || [];
+    var group = groups.find(function (g) { return g[0] === articleSection.value; });
+    if (!group) return [];
+    var thumbsBySlug = topicsByCategory[articleCategory.value] || [];
+    return group[1].map(function (pair) {
+      var meta = thumbsBySlug.find(function (t) { return t.slug === pair[0]; });
+      return { slug: pair[0], label: pair[1], thumb: meta && meta.thumb };
+    });
+  }
+
   function refreshTopicOptions(selectSlug) {
-    var topics = topicsByCategory[articleCategory.value] || [];
+    var hasSection = !!articleSection.value && articleSection.value !== '__new__';
+    var topics = hasSection ? topicsInCurrentSection() : [];
     articleTopic.innerHTML = '';
     var noneOpt = document.createElement('option');
     noneOpt.value = '';
-    noneOpt.textContent = 'Sin tema específico';
+    noneOpt.textContent = 'Sin tema específico (queda directo en la sección)';
     articleTopic.appendChild(noneOpt);
     topics.forEach(function (t) {
       var opt = document.createElement('option');
@@ -581,11 +599,15 @@
     var newOpt = document.createElement('option');
     newOpt.value = '__new__';
     newOpt.textContent = '+ Crear tema nuevo…';
+    newOpt.disabled = !hasSection;
     articleTopic.appendChild(newOpt);
+    articleTopic.disabled = !hasSection;
     if (selectSlug) articleTopic.value = selectSlug;
-    topicHint.textContent = topics.length
-      ? 'Temas de ' + categoryMeta(articleCategory.value).label + ': ' + topics.map(function (t) { return t.label; }).join(', ') + '.'
-      : 'Esta categoría todavía no tiene temas en data/topics.json. Elegí "+ Crear tema nuevo…" para agregar el primero.';
+    topicHint.textContent = !hasSection
+      ? 'Elegí primero una sección.'
+      : (topics.length
+        ? 'Temas de "' + articleSection.value + '": ' + topics.map(function (t) { return t.label; }).join(', ') + '.'
+        : 'Esta sección todavía no tiene temas — es opcional, el artículo puede quedar directo en la sección.');
   }
   function refreshGroupsAndTopics() {
     return getJSON('/api/topic-groups').then(function (groups) {
@@ -595,92 +617,117 @@
     });
   }
 
-  function populateNewTopicGroupSelect() {
-    var groupNames = topicGroupsRaw[articleCategory.value] ? topicGroupsRaw[articleCategory.value].map(function (g) { return g[0]; }) : [];
-    newTopicGroup.innerHTML = '';
-    groupNames.forEach(function (name) {
+  function refreshSectionOptions(selectName) {
+    var names = topicGroupsRaw[articleCategory.value] ? topicGroupsRaw[articleCategory.value].map(function (g) { return g[0]; }) : [];
+    var current = articleSection.value;
+    articleSection.innerHTML = '';
+    var placeholderOpt = document.createElement('option');
+    placeholderOpt.value = '';
+    placeholderOpt.textContent = 'Elegí una sección…';
+    articleSection.appendChild(placeholderOpt);
+    names.forEach(function (name) {
       var opt = document.createElement('option');
       opt.value = name;
       opt.textContent = name;
-      newTopicGroup.appendChild(opt);
+      articleSection.appendChild(opt);
     });
-    var newGroupOpt = document.createElement('option');
-    newGroupOpt.value = '__newgroup__';
-    newGroupOpt.textContent = '+ Crear sección nueva…';
-    newTopicGroup.appendChild(newGroupOpt);
-    // Si la categoría todavía no tiene ninguna sección, "+ Crear sección
-    // nueva…" queda como única opción, ya seleccionada de entrada — el
-    // select nunca dispara "change" en ese caso, así que hay que
-    // sincronizar el campo de nombre a mano acá también (si no, el campo
-    // para escribir el nombre de la sección nunca se muestra).
-    newTopicGroupName.hidden = newTopicGroup.value !== '__newgroup__';
+    var newOpt = document.createElement('option');
+    newOpt.value = '__new__';
+    newOpt.textContent = '+ Crear sección nueva…';
+    articleSection.appendChild(newOpt);
+    if (selectName) articleSection.value = selectName;
+    else if (names.some(function (n) { return n === current; })) articleSection.value = current;
+    renameSectionBtn.hidden = !articleSection.value || articleSection.value === '__new__';
   }
-  newTopicGroup.addEventListener('change', function () {
-    newTopicGroupName.hidden = newTopicGroup.value !== '__newgroup__';
-    if (!newTopicGroupName.hidden) newTopicGroupName.focus();
+
+  articleSection.addEventListener('change', function () {
+    newSectionRow.hidden = articleSection.value !== '__new__';
+    renameSectionBtn.hidden = !articleSection.value || articleSection.value === '__new__';
+    if (!newSectionRow.hidden) newSectionName.focus();
+    refreshTopicOptions();
+    newTopicRow.hidden = true;
+    renderTopicManager();
+    refreshSubtopicOptions();
+    renderSubtopicManager();
+  });
+
+  newSectionCreateBtn.addEventListener('click', function () {
+    var name = newSectionName.value.trim();
+    if (!name) { toast('Escribí un nombre para la sección', true); return; }
+    if (!articleCategory.value) { toast('Elegí primero una categoría', true); return; }
+    newSectionCreateBtn.disabled = true;
+    newSectionCreateBtn.textContent = 'Creando…';
+    postJSON('/api/sections', { category: articleCategory.value, name: name }).then(function () {
+      return refreshGroupsAndTopics();
+    }).then(function () {
+      refreshSectionOptions(name);
+      newSectionRow.hidden = true;
+      newSectionName.value = '';
+      refreshTopicOptions();
+      renderTopicManager();
+      toast('Sección "' + name + '" creada');
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo crear la sección', true);
+    }).finally(function () {
+      newSectionCreateBtn.disabled = false;
+      newSectionCreateBtn.textContent = 'Crear sección';
+    });
+  });
+
+  renameSectionBtn.addEventListener('click', function () {
+    renameTopicGroupPrompt(articleSection.value);
   });
 
   function renderTopicManager() {
-    var groups = topicGroupsRaw[articleCategory.value] || [];
     topicManager.innerHTML = '';
-    if (!groups.length) return;
-    groups.forEach(function (group) {
-      var row = document.createElement('div');
-      row.className = 'topic-manager-group';
-      var name = document.createElement('span');
-      name.className = 'group-name';
-      name.textContent = group[0];
-      row.appendChild(name);
-      var renameGroupBtn = document.createElement('button');
-      renameGroupBtn.type = 'button'; renameGroupBtn.title = 'Renombrar sección'; renameGroupBtn.textContent = '✎';
-      renameGroupBtn.addEventListener('click', function () { renameTopicGroupPrompt(group[0]); });
-      row.appendChild(renameGroupBtn);
-      group[1].forEach(function (pair) {
-        var slug = pair[0], label = pair[1];
-        var category = articleCategory.value;
-        var topicMeta = (topicsByCategory[category] || []).find(function (t) { return t.slug === slug; });
-        var hasThumb = !!(topicMeta && topicMeta.thumb);
+    var topics = (articleSection.value && articleSection.value !== '__new__') ? topicsInCurrentSection() : [];
+    if (!topics.length) return;
+    var row = document.createElement('div');
+    row.className = 'topic-manager-group';
+    var category = articleCategory.value;
+    topics.forEach(function (t) {
+      var slug = t.slug, label = t.label;
+      var hasThumb = !!t.thumb;
 
-        var chip = document.createElement('span');
-        chip.className = 'topic-chip' + (hasThumb ? ' has-thumb' : '');
-        var text = document.createElement('span');
-        text.textContent = label;
-        var renameBtn = document.createElement('button');
-        renameBtn.type = 'button'; renameBtn.title = 'Renombrar'; renameBtn.textContent = '✎';
-        renameBtn.addEventListener('click', function () { renameTopicPrompt(slug, label); });
+      var chip = document.createElement('span');
+      chip.className = 'topic-chip' + (hasThumb ? ' has-thumb' : '');
+      var text = document.createElement('span');
+      text.textContent = label;
+      var renameBtn = document.createElement('button');
+      renameBtn.type = 'button'; renameBtn.title = 'Renombrar'; renameBtn.textContent = '✎';
+      renameBtn.addEventListener('click', function () { renameTopicPrompt(slug, label); });
 
-        var imgInput = document.createElement('input');
-        imgInput.type = 'file'; imgInput.accept = 'image/*'; imgInput.hidden = true;
-        imgInput.addEventListener('change', function () {
-          var file = imgInput.files[0];
-          if (!file) return;
-          uploadTopicImage(category, slug, file);
-        });
-        var imgBtn = document.createElement('button');
-        imgBtn.type = 'button';
-        imgBtn.title = hasThumb ? 'Cambiar imagen del tema' : 'Subir imagen para este tema';
-        imgBtn.textContent = '🖼️';
-        imgBtn.addEventListener('click', function () { imgInput.click(); });
-
-        var delBtn = document.createElement('button');
-        delBtn.type = 'button'; delBtn.title = 'Eliminar tema'; delBtn.textContent = '×'; delBtn.className = 'danger';
-        delBtn.addEventListener('click', function () { deleteTopicConfirm(slug, label); });
-
-        chip.appendChild(text);
-        chip.appendChild(renameBtn);
-        chip.appendChild(imgInput);
-        chip.appendChild(imgBtn);
-        if (hasThumb) {
-          var removeImgBtn = document.createElement('button');
-          removeImgBtn.type = 'button'; removeImgBtn.title = 'Quitar imagen del tema'; removeImgBtn.textContent = '🗑'; removeImgBtn.className = 'danger';
-          removeImgBtn.addEventListener('click', function () { removeTopicImageConfirm(category, slug, label); });
-          chip.appendChild(removeImgBtn);
-        }
-        chip.appendChild(delBtn);
-        row.appendChild(chip);
+      var imgInput = document.createElement('input');
+      imgInput.type = 'file'; imgInput.accept = 'image/*'; imgInput.hidden = true;
+      imgInput.addEventListener('change', function () {
+        var file = imgInput.files[0];
+        if (!file) return;
+        uploadTopicImage(category, slug, file);
       });
-      topicManager.appendChild(row);
+      var imgBtn = document.createElement('button');
+      imgBtn.type = 'button';
+      imgBtn.title = hasThumb ? 'Cambiar imagen del tema' : 'Subir imagen para este tema';
+      imgBtn.textContent = '🖼️';
+      imgBtn.addEventListener('click', function () { imgInput.click(); });
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button'; delBtn.title = 'Eliminar tema'; delBtn.textContent = '×'; delBtn.className = 'danger';
+      delBtn.addEventListener('click', function () { deleteTopicConfirm(slug, label); });
+
+      chip.appendChild(text);
+      chip.appendChild(renameBtn);
+      chip.appendChild(imgInput);
+      chip.appendChild(imgBtn);
+      if (hasThumb) {
+        var removeImgBtn = document.createElement('button');
+        removeImgBtn.type = 'button'; removeImgBtn.title = 'Quitar imagen del tema'; removeImgBtn.textContent = '🗑'; removeImgBtn.className = 'danger';
+        removeImgBtn.addEventListener('click', function () { removeTopicImageConfirm(category, slug, label); });
+        chip.appendChild(removeImgBtn);
+      }
+      chip.appendChild(delBtn);
+      row.appendChild(chip);
     });
+    topicManager.appendChild(row);
   }
 
   function uploadTopicImage(category, slug, file) {
@@ -726,8 +773,8 @@
       toast('Sección renombrada a "' + newName + '"');
       return refreshGroupsAndTopics();
     }).then(function () {
+      refreshSectionOptions(newName);
       renderTopicManager();
-      populateNewTopicGroupSelect();
       return postJSON('/api/regenerate', {});
     }).catch(function (err) {
       toast(err.message || 'No se pudo renombrar la sección', true);
@@ -961,9 +1008,10 @@
   });
 
   articleCategory.addEventListener('change', function () {
+    refreshSectionOptions();
+    newSectionRow.hidden = true;
     refreshTopicOptions();
     newTopicRow.hidden = true;
-    populateNewTopicGroupSelect();
     renderTopicManager();
     refreshSubtopicOptions();
     renderSubtopicManager();
@@ -971,10 +1019,7 @@
 
   articleTopic.addEventListener('change', function () {
     newTopicRow.hidden = articleTopic.value !== '__new__';
-    if (!newTopicRow.hidden) {
-      populateNewTopicGroupSelect();
-      newTopicLabel.focus();
-    }
+    if (!newTopicRow.hidden) newTopicLabel.focus();
     refreshSubtopicOptions();
     renderSubtopicManager();
   });
@@ -983,17 +1028,15 @@
     var label = newTopicLabel.value.trim();
     if (!label) { toast('Escribí un nombre para el tema', true); return; }
     if (!articleCategory.value) { toast('Elegí primero una categoría', true); return; }
-    var group = newTopicGroup.value === '__newgroup__' ? newTopicGroupName.value.trim() : newTopicGroup.value;
-    if (newTopicGroup.value === '__newgroup__' && !group) { toast('Escribí un nombre para la sección nueva', true); return; }
+    if (!articleSection.value || articleSection.value === '__new__') { toast('Elegí primero una sección', true); return; }
     newTopicCreateBtn.disabled = true;
     newTopicCreateBtn.textContent = 'Creando…';
-    postJSON('/api/topics', { category: articleCategory.value, label: label, group: group || undefined }).then(function (result) {
+    postJSON('/api/topics', { category: articleCategory.value, label: label, group: articleSection.value }).then(function (result) {
       return refreshGroupsAndTopics().then(function () {
         refreshTopicOptions(result.topic.slug);
         renderTopicManager();
         newTopicRow.hidden = true;
         newTopicLabel.value = '';
-        newTopicGroupName.value = '';
         toast('Tema creado: ' + result.topic.label + '. Regenerando sus páginas…');
         return postJSON('/api/regenerate', {});
       });
@@ -1038,13 +1081,20 @@
     if (topics.some(function (t) { return t.slug === current; })) filterTopic.value = current;
   }
 
+  function sectionForTopic(category, topicSlug) {
+    var groups = topicGroupsRaw[category] || [];
+    var found = groups.find(function (g) { return g[1].some(function (t) { return t[0] === topicSlug; }); });
+    return found ? found[0] : '';
+  }
+
   function prefillFormFromFilter() {
     if (articleEditIndex !== null) return; // no tocar un artículo que se está editando
     if (filterCategory.value) {
       articleCategory.value = filterCategory.value;
       articleCategory._imgSelectSync();
+      var section = filterTopic.value ? sectionForTopic(filterCategory.value, filterTopic.value) : '';
+      refreshSectionOptions(section);
       refreshTopicOptions();
-      populateNewTopicGroupSelect();
       renderTopicManager();
       if (filterTopic.value) articleTopic.value = filterTopic.value;
       refreshSubtopicOptions();
@@ -1208,8 +1258,9 @@
     articleFormTitle.textContent = 'Editar artículo';
     articleCategory.value = a.category;
     articleCategory._imgSelectSync();
+    refreshSectionOptions(a.section || '');
+    newSectionRow.hidden = true;
     refreshTopicOptions();
-    populateNewTopicGroupSelect();
     renderTopicManager();
     newTopicRow.hidden = true;
     articleTopic.value = a.topic || '';
@@ -1235,6 +1286,8 @@
     articleEditIndex = null;
     articleForm.reset();
     articleCategory._imgSelectSync();
+    refreshSectionOptions();
+    newSectionRow.hidden = true;
     refreshTopicOptions();
     refreshSubtopicOptions();
     renderSubtopicManager();
@@ -1272,6 +1325,10 @@
 
   articleForm.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (!articleSection.value || articleSection.value === '__new__') {
+      toast('Elegí (o creá) una sección antes de guardar', true);
+      return;
+    }
     var meta = categoryMeta(articleCategory.value);
     var slug = articleSlug.value.trim() || slugify(articleTitle.value);
     var topicValue = articleTopic.value === '__new__' ? '' : articleTopic.value;
@@ -1281,6 +1338,7 @@
       category: articleCategory.value,
       categoryLabel: meta.label,
       icon: meta.icon,
+      section: articleSection.value,
       date: articleDate.value,
       readTime: articleReadTime.value.trim(),
       topic: topicValue,
@@ -1684,8 +1742,8 @@
 
     fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.label; });
     fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.label; });
+    refreshSectionOptions();
     refreshTopicOptions();
-    populateNewTopicGroupSelect();
     renderTopicManager();
     refreshSubtopicOptions();
     renderSubtopicManager();

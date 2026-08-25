@@ -174,6 +174,28 @@ function addTopic(categorySlug, label, groupName) {
   return { slug: slug, label: label, group: targetName };
 }
 
+/* Crea una sección ("grupo") en data/topics.json para una categoría, sin
+   ningún tema adentro todavía — es la "carpeta" donde después se pueden
+   guardar artículos directamente o agregar temas (sub-carpetas) si hace
+   falta. Si la sección ya existe no hace nada (no es un error, así el
+   formulario de artículos puede llamarla siempre que el usuario elija
+   "+ Crear sección nueva…" sin fijarse primero si ya estaba creada). */
+function addSection(categorySlug, name) {
+  if (!categoryBySlug(categorySlug)) throw new Error('Categoría desconocida: ' + categorySlug);
+  var trimmed = name && name.trim();
+  if (!trimmed) throw new Error('El nombre de la sección no puede estar vacío');
+
+  var topicsPath = path.join(DATA_DIR, 'topics.json');
+  var allGroups = loadTopicGroups();
+  var groups = allGroups[categorySlug] || [];
+  if (!groups.some(function (g) { return g[0] === trimmed; })) {
+    groups.push([trimmed, []]);
+    allGroups[categorySlug] = groups;
+    fs.writeFileSync(topicsPath, JSON.stringify(allGroups, null, 2) + '\n', 'utf8');
+  }
+  return { name: trimmed };
+}
+
 /* Nombres de los grupos/secciones ya existentes para una categoría, en el
    orden en que aparecen en la página (ej. "⭐ Populares", "Nintendo", ...). */
 function listGroupNames(categorySlug) {
@@ -247,10 +269,10 @@ function deleteTopic(categorySlug, slug) {
   var found = findTopic(groups, slug);
   if (!found) throw new Error('No se encontró ese tema en esta categoría');
 
+  // Ojo: la sección NO se borra automáticamente al quedarse sin temas —
+  // una sección puede existir solo para guardar artículos directamente
+  // adentro, sin ningún tema (ver addSection).
   groups[found.groupIndex][1].splice(found.itemIndex, 1);
-  if (groups[found.groupIndex][1].length === 0) {
-    groups.splice(found.groupIndex, 1);
-  }
   allGroups[categorySlug] = groups;
   fs.writeFileSync(topicsPath, JSON.stringify(allGroups, null, 2) + '\n', 'utf8');
 
@@ -1006,6 +1028,7 @@ module.exports = {
   loadTopicGroups: loadTopicGroups,
   topicLabelFor: topicLabelFor,
   addTopic: addTopic,
+  addSection: addSection,
   listGroupNames: listGroupNames,
   renameTopic: renameTopic,
   renameTopicGroup: renameTopicGroup,
