@@ -88,7 +88,7 @@ const VEXLOW_ARTICLES = [
     "date": "2026-08-24",
     "readTime": "125 Minutes",
     "topic": "foodbeverage",
-    "subtopic": "",
+    "subtopic": "mcdonalds",
     "slug": "mcdonald-s",
     "dek": "",
     "image": "img/business/imagen-portada-2.webp",
