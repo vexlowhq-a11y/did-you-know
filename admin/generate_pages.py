@@ -623,10 +623,9 @@ def generate():
         if slug == "trending":
             feed_html = (
                 '    <div class="home-section" id="noticias">\n'
-                '      <div class="section-head"><h2>{}</h2></div>\n'
                 '      <div class="rail-grid" id="categoryGrid"></div>\n'
                 '    </div>\n'
-            ).format(strings["most_talked_about"])
+            )
 
         topics_html = ""
         search_html = ""
