@@ -93,6 +93,98 @@
       opt.textContent = labelFn(item);
       select.appendChild(opt);
     });
+    if (select._imgSelectSync) select._imgSelectSync();
+  }
+
+  /* =====================================================
+     SELECT CON MINIATURA (categorías)
+     Un <select> nativo no puede mostrar <img> dentro de sus <option>,
+     así que para los 3 selects de categoría (hero, artículo, filtro) se
+     arma un desplegable propio al lado que sí muestra el ícono subido
+     de cada categoría. El <select> original queda oculto pero sigue
+     siendo la fuente de verdad: todo el resto del código sigue leyendo
+     y escribiendo su .value y escuchando su evento "change" exactamente
+     igual que antes. Por eso, cada vez que algo cambia el <select> desde
+     afuera (fillSelect, un reset de formulario, o una asignación directa
+     a .value), hay que llamar a select._imgSelectSync() para que el
+     desplegable visual se actualice — fillSelect ya lo hace solo.
+     ===================================================== */
+  function categoryThumbHtml(el, cat) {
+    if (cat && cat.iconImage) {
+      el.style.backgroundImage = "url('/site/" + cat.iconImage + "?v=" + assetCacheBust + "')";
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      el.textContent = '';
+    } else {
+      el.style.backgroundImage = '';
+      el.textContent = cat ? cat.icon : '';
+    }
+  }
+
+  function enhanceCategorySelect(select) {
+    var wrap = document.createElement('div');
+    wrap.className = 'img-select';
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(select);
+
+    var trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'img-select-trigger';
+    var thumb = document.createElement('span'); thumb.className = 'img-select-thumb';
+    var label = document.createElement('span'); label.className = 'img-select-label';
+    var caret = document.createElement('span'); caret.className = 'img-select-caret'; caret.textContent = '▾';
+    trigger.appendChild(thumb); trigger.appendChild(label); trigger.appendChild(caret);
+
+    var panel = document.createElement('div');
+    panel.className = 'img-select-panel';
+    panel.hidden = true;
+
+    wrap.appendChild(trigger);
+    wrap.appendChild(panel);
+
+    function closePanel() { panel.hidden = true; }
+    function openPanel() { panel.hidden = false; }
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (select.disabled) return;
+      if (panel.hidden) { sync(); openPanel(); } else { closePanel(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) closePanel();
+    });
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closePanel();
+    });
+
+    function sync() {
+      trigger.classList.toggle('disabled', !!select.disabled);
+      var selectedOpt = select.options[select.selectedIndex];
+      var selCat = categories.find(function (c) { return c.slug === select.value; });
+      label.textContent = selectedOpt ? selectedOpt.textContent : '';
+      categoryThumbHtml(thumb, selCat);
+
+      panel.innerHTML = '';
+      Array.prototype.forEach.call(select.options, function (opt) {
+        var cat = categories.find(function (c) { return c.slug === opt.value; });
+        var row = document.createElement('div');
+        row.className = 'img-select-option' + (opt.value === select.value ? ' selected' : '');
+        var t = document.createElement('span'); t.className = 'img-select-thumb';
+        categoryThumbHtml(t, cat);
+        var lab = document.createElement('span'); lab.textContent = opt.textContent;
+        row.appendChild(t); row.appendChild(lab);
+        row.addEventListener('click', function () {
+          select.value = opt.value;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          sync();
+          closePanel();
+        });
+        panel.appendChild(row);
+      });
+    }
+
+    select._imgSelectSync = sync;
+    sync();
   }
 
   /* =====================================================
@@ -249,6 +341,7 @@
     var s = heroData[i];
     heroFormTitle.textContent = 'Editar diapositiva';
     heroCategory.value = s.category;
+    heroCategory._imgSelectSync();
     heroTitleInput.value = s.title;
     heroDekInput.value = s.dek;
     heroCurrentImage = s.image || '';
@@ -263,6 +356,7 @@
   function resetHeroForm() {
     heroEditIndex = null;
     heroForm.reset();
+    heroCategory._imgSelectSync();
     heroCurrentImage = '';
     updateHeroImageStatus();
     heroCurrentColor = 'auto';
@@ -948,6 +1042,7 @@
     if (articleEditIndex !== null) return; // no tocar un artículo que se está editando
     if (filterCategory.value) {
       articleCategory.value = filterCategory.value;
+      articleCategory._imgSelectSync();
       refreshTopicOptions();
       populateNewTopicGroupSelect();
       renderTopicManager();
@@ -1105,6 +1200,7 @@
     var a = articlesData[i];
     articleFormTitle.textContent = 'Editar artículo';
     articleCategory.value = a.category;
+    articleCategory._imgSelectSync();
     refreshTopicOptions();
     populateNewTopicGroupSelect();
     renderTopicManager();
@@ -1131,6 +1227,7 @@
   function resetArticleForm() {
     articleEditIndex = null;
     articleForm.reset();
+    articleCategory._imgSelectSync();
     refreshTopicOptions();
     refreshSubtopicOptions();
     renderSubtopicManager();
@@ -1449,6 +1546,7 @@
       filterCategory.appendChild(opt);
     });
     if (contentCategories().some(function (c) { return c.slug === current; })) filterCategory.value = current;
+    filterCategory._imgSelectSync();
   }
 
   // Vuelve a pedir /api/categories y refresca todo lo que depende de la
@@ -1551,6 +1649,10 @@
       toast(err.message || 'No se pudieron guardar los tamaños', true);
     });
   });
+
+  enhanceCategorySelect(heroCategory);
+  enhanceCategorySelect(articleCategory);
+  enhanceCategorySelect(filterCategory);
 
   /* ---- Init ---- */
   Promise.all([
