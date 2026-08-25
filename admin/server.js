@@ -866,7 +866,49 @@ var server = http.createServer(function (req, res) {
         if (pagegen.deleteArticleFile(a)) removed.push(key);
       });
 
-      return sendJSON(res, 200, { ok: true, generated: generated, removed: removed, errors: errors });
+      // Mismo caso, un nivel más adentro: si este guardado dejó un
+      // subtema sin ningún artículo (se le sacó el subtema al último que
+      // lo usaba), se borra solo junto con su página. Va primero para
+      // que, si el tema también se queda sin nada después de esto, la
+      // limpieza de temas de abajo ya lo vea vacío.
+      var prevSubtopicKeys = new Set();
+      previous.forEach(function (a) { if (a.category && a.topic && a.subtopic) prevSubtopicKeys.add(a.category + ' ' + a.topic + ' ' + a.subtopic); });
+      var currentSubtopicKeys = new Set();
+      data.forEach(function (a) { if (a.category && a.topic && a.subtopic) currentSubtopicKeys.add(a.category + ' ' + a.topic + ' ' + a.subtopic); });
+      var emptiedSubtopics = [];
+      prevSubtopicKeys.forEach(function (key) {
+        if (currentSubtopicKeys.has(key)) return;
+        var parts = key.split(' ');
+        try {
+          pagegen.deleteSubtopic(parts[0], parts[1], parts[2]);
+          emptiedSubtopics.push(parts[0] + '/' + parts[1] + '-' + parts[2]);
+        } catch (e) { /* ya no existe / ya se borró desde otro lado — no pasa nada */ }
+      });
+
+      // Si este guardado dejó un tema sin ningún artículo (se le sacó el
+      // tema al último que lo usaba, se lo cambió de tema, o se borró ese
+      // artículo) y ese tema tampoco tiene subtemas, se borra solo — así
+      // no queda como una carpeta vacía/duplicada en la categoría. La
+      // sección donde vivía sigue existiendo igual (ver deleteTopic).
+      // Aplica en cualquier categoría, existente o nueva.
+      var prevTopicKeys = new Set();
+      previous.forEach(function (a) { if (a.category && a.topic) prevTopicKeys.add(a.category + ' ' + a.topic); });
+      var currentTopicKeys = new Set();
+      data.forEach(function (a) { if (a.category && a.topic) currentTopicKeys.add(a.category + ' ' + a.topic); });
+      var emptiedTopics = [];
+      prevTopicKeys.forEach(function (key) {
+        if (currentTopicKeys.has(key)) return;
+        var parts = key.split(' ');
+        var category = parts[0], topicSlug = parts[1];
+        var subtopicCount = (pagegen.loadSubtopics()[category + '/' + topicSlug] || []).length;
+        if (subtopicCount > 0) return;
+        try {
+          pagegen.deleteTopic(category, topicSlug);
+          emptiedTopics.push(category + '/' + topicSlug);
+        } catch (e) { /* ya no existe / ya se borró desde otro lado — no pasa nada */ }
+      });
+
+      return sendJSON(res, 200, { ok: true, generated: generated, removed: removed, errors: errors, emptiedTopics: emptiedTopics, emptiedSubtopics: emptiedSubtopics });
     });
   }
   if (urlPath === '/api/deploy' && req.method === 'POST') {

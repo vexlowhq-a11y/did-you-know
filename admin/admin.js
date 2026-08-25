@@ -1312,12 +1312,31 @@
   function saveArticles(successMsg) {
     return postJSON('/api/articles', articlesData).then(function (result) {
       renderArticlesList();
-      if (result && result.errors && result.errors.length) {
-        toast('Guardado, pero falló generar: ' + result.errors.map(function (e) { return e.slug; }).join(', '), true);
-      } else {
-        toast(successMsg || 'Guardado');
+      var next = Promise.resolve();
+      var hadEmptied = result && ((result.emptiedTopics && result.emptiedTopics.length) || (result.emptiedSubtopics && result.emptiedSubtopics.length));
+      if (hadEmptied) {
+        // Algún tema o subtema se quedó sin artículos con este guardado y
+        // se borró solo (ver POST /api/articles) — refrescamos lo que
+        // depende de eso para que el panel no siga mostrando algo que ya
+        // no está.
+        next = refreshGroupsAndTopics().then(function () {
+          return getJSON('/api/subtopics').then(function (list) { subtopicsByTopicKey = list; });
+        }).then(function () {
+          refreshSectionOptions();
+          refreshTopicOptions();
+          renderTopicManager();
+          refreshSubtopicOptions();
+          renderSubtopicManager();
+        });
       }
-      return result;
+      return next.then(function () {
+        if (result && result.errors && result.errors.length) {
+          toast('Guardado, pero falló generar: ' + result.errors.map(function (e) { return e.slug; }).join(', '), true);
+        } else {
+          toast(successMsg || 'Guardado');
+        }
+        return result;
+      });
     }).catch(function () {
       toast('No se pudo guardar. ¿Está corriendo el panel?', true);
     });

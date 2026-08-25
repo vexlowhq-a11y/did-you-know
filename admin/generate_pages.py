@@ -678,7 +678,12 @@ def generate():
                         thumb_or_icon=thumb_or_icon_html(art.get("image"), cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )
-                topics_html += TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=group_name, topic_cards=cards)
+                # Una sección puede existir sin nada adentro todavía (recién
+                # creada, o se quedó sin temas ni artículos) — no tiene
+                # sentido mostrar el título de la sección con una grilla
+                # vacía debajo, así que no se imprime hasta que tenga algo.
+                if cards:
+                    topics_html += TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=group_name, topic_cards=cards)
             search_html = (
                 '    <div class="topic-search">\n'
                 '      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>\n'
