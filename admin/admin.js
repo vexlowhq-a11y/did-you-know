@@ -1026,7 +1026,7 @@
     filterTopic.innerHTML = '';
     var noneOpt = document.createElement('option');
     noneOpt.value = '';
-    noneOpt.textContent = 'Todos los temas';
+    noneOpt.textContent = filterCategory.value ? 'Todos los temas' : 'Elegí una categoría primero';
     filterTopic.appendChild(noneOpt);
     topics.forEach(function (t) {
       var opt = document.createElement('option');
@@ -1156,8 +1156,15 @@
 
       var thumb = document.createElement('div');
       thumb.className = 'thumb';
-      thumb.textContent = a.icon || meta.icon;
-      thumb.style.background = 'var(--surface-2)';
+      var thumbImage = a.image || meta.iconImage;
+      if (thumbImage) {
+        thumb.style.backgroundImage = "url('/site/" + thumbImage + "?v=" + assetCacheBust + "')";
+        thumb.style.backgroundSize = 'cover';
+        thumb.style.backgroundPosition = 'center';
+      } else {
+        thumb.textContent = a.icon || meta.icon;
+        thumb.style.background = 'var(--surface-2)';
+      }
 
       var info = document.createElement('div');
       info.className = 'info';
@@ -1542,7 +1549,7 @@
     contentCategories().forEach(function (c) {
       var opt = document.createElement('option');
       opt.value = c.slug;
-      opt.textContent = c.icon + ' ' + c.label;
+      opt.textContent = c.label;
       filterCategory.appendChild(opt);
     });
     if (contentCategories().some(function (c) { return c.slug === current; })) filterCategory.value = current;
@@ -1557,8 +1564,8 @@
       categories = list;
       assetCacheBust = Date.now();
       renderCategoriesList();
-      fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
-      fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
+      fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.label; });
+      fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.label; });
       refreshFilterCategoryOptionsList();
     });
   }
@@ -1675,8 +1682,8 @@
     homeIconData = results[7];
     renderHomeIcon();
 
-    fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
-    fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
+    fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.label; });
+    fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.label; });
     refreshTopicOptions();
     populateNewTopicGroupSelect();
     renderTopicManager();
