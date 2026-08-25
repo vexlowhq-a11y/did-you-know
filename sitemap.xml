@@ -86,11 +86,6 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/sports/badminton.html</loc>
-    <lastmod>2026-08-24</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://didyouknow.com/categoria/sports/thebwfworldchampionships.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>weekly</changefreq>
@@ -102,6 +97,11 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/sports/olympicgames.html</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/sports/badminton.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>weekly</changefreq>
   </url>
@@ -131,11 +131,6 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/sports/badminton.html</loc>
-    <lastmod>2026-08-23</lastmod>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
     <loc>https://didyouknow.com/categoria/sports/the-bwf-world-championships.html</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
@@ -152,6 +147,16 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/ai/superintelligence.html</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/business/mcdonald-s.html</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/sports/badminton.html</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
   </url>

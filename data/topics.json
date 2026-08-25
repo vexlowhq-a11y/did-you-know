@@ -19,10 +19,6 @@
       "Badminton",
       [
         [
-          "badminton",
-          "Badminton"
-        ],
-        [
           "thebwfworldchampionships",
           "The BWF World Championships"
         ],
@@ -33,6 +29,10 @@
         [
           "olympicgames",
           "Olympic Games"
+        ],
+        [
+          "badminton",
+          "Badminton"
         ]
       ]
     ],
