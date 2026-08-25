@@ -207,6 +207,33 @@ function renameTopic(categorySlug, slug, newLabel) {
   return { slug: slug, label: newLabel.trim() };
 }
 
+/* Cambia el nombre de una sección ("grupo") que agrupa temas dentro de
+   una categoría — ej. "Companies" pasa a llamarse "Brands". Solo cambia
+   el texto que se muestra como encabezado; no toca los temas de adentro
+   ni sus slugs/páginas. */
+function renameTopicGroup(categorySlug, oldName, newName) {
+  if (!categoryBySlug(categorySlug)) throw new Error('Categoría desconocida: ' + categorySlug);
+  var trimmed = newName && newName.trim();
+  if (!trimmed) throw new Error('El nuevo nombre no puede estar vacío');
+
+  var topicsPath = path.join(DATA_DIR, 'topics.json');
+  var allGroups = loadTopicGroups();
+  var groups = allGroups[categorySlug] || [];
+  var target = null;
+  for (var g = 0; g < groups.length; g++) {
+    if (groups[g][0] === oldName) { target = groups[g]; break; }
+  }
+  if (!target) throw new Error('No se encontró esa sección en esta categoría');
+  if (trimmed !== oldName && groups.some(function (g) { return g[0] === trimmed; })) {
+    throw new Error('Ya existe otra sección con ese nombre en esta categoría');
+  }
+
+  target[0] = trimmed;
+  allGroups[categorySlug] = groups;
+  fs.writeFileSync(topicsPath, JSON.stringify(allGroups, null, 2) + '\n', 'utf8');
+  return { name: trimmed };
+}
+
 /* Saca un tema de data/topics.json y borra su página HTML si existe.
    No toca los artículos que lo tengan asignado — eso se valida antes,
    desde server.js, para no dejar links rotos sin avisar. */
@@ -869,9 +896,43 @@ function bannerHtmlFor(article, cat) {
   return '      <div class="article-banner media ' + cat.slug + '">' + catIconHtml(cat, '../../') + '</div>\n';
 }
 
+/* La página de un tema (y la de un subtema) vive en
+   categoria/{categoría}/{slug}.html, exactamente el mismo esquema que usa
+   la página de un artículo (articleFilePath, más abajo). Si alguien titula
+   un artículo igual que su propio tema — algo natural, ej. escribir el
+   artículo "Badminton" dentro del tema "Badminton" — y el slug del
+   artículo termina siendo igual al del tema, las dos páginas quedan en el
+   mismo archivo: el artículo pisa la página del tema al guardarlo, y
+   "Regenerar categorías y temas" (o cualquier corrida de
+   generate_pages.py) pisa el artículo de vuelta con la plantilla genérica
+   del tema, perdiendo el contenido. Por eso el slug de un artículo no
+   puede coincidir con el de ningún tema o subtema (tema+subtema) de esa
+   misma categoría. */
+function topicOrSubtopicSlugsFor(categorySlug) {
+  var slugs = [];
+  var groups = loadTopicGroups()[categorySlug] || [];
+  groups.forEach(function (g) {
+    g[1].forEach(function (t) {
+      var topicSlug = t[0];
+      slugs.push(topicSlug);
+      var subs = loadSubtopics()[subtopicKey(categorySlug, topicSlug)] || [];
+      subs.forEach(function (s) { slugs.push(topicSlug + '-' + s[0]); });
+    });
+  });
+  return slugs;
+}
+
+function assertArticleSlugFree(article) {
+  var clashes = topicOrSubtopicSlugsFor(article.category);
+  if (clashes.indexOf(article.slug) !== -1) {
+    throw new Error('El slug "' + article.slug + '" ya lo usa un tema (o subtema) de esta categoría — la página del artículo pisaría la del tema. Elegí un slug distinto (ej. "historia-de-' + article.slug + '").');
+  }
+}
+
 function generateArticleFile(article) {
   var cat = categoryBySlug(article.category);
   if (!cat) throw new Error('Categoría desconocida: ' + article.category);
+  assertArticleSlugFree(article);
   var blocks = loadSidebarFooter();
 
   var topicSlug = article.topic || '';
@@ -947,6 +1008,7 @@ module.exports = {
   addTopic: addTopic,
   listGroupNames: listGroupNames,
   renameTopic: renameTopic,
+  renameTopicGroup: renameTopicGroup,
   deleteTopic: deleteTopic,
   loadSubtopics: loadSubtopics,
   subtopicLabelFor: subtopicLabelFor,
@@ -955,5 +1017,6 @@ module.exports = {
   deleteSubtopic: deleteSubtopic,
   slugify: slugify,
   generateArticleFile: generateArticleFile,
-  deleteArticleFile: deleteArticleFile
+  deleteArticleFile: deleteArticleFile,
+  topicOrSubtopicSlugsFor: topicOrSubtopicSlugsFor
 };

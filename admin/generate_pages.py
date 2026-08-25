@@ -290,6 +290,18 @@ TOPICS_GROUP_SECTION_TEMPLATE = """    <div class="home-section" style="margin-t
 
 """
 
+# Misma grilla que TOPICS_GROUP_SECTION_TEMPLATE pero sin el subtítulo de
+# sección — para los subtemas dentro de una página de tema y para los temas
+# "auto-detectados" de una categoría sin grupos propios, donde antes se
+# mostraba un subtítulo genérico fijo ("📌 Topics we cover") que no aporta
+# nada (a diferencia del nombre real de una sección como "Companies").
+TOPICS_GRID_TEMPLATE = """    <div class="home-section" style="margin-top:0;">
+      <div class="guides-grid">
+{topic_cards}      </div>
+    </div>
+
+"""
+
 TOPIC_PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -338,7 +350,6 @@ TOPIC_PAGE_TEMPLATE = """<!DOCTYPE html>
 # temas que todavía no tienen subtemas propios.
 ARTICLES_GRID_BLOCK = (
     '    <div class="home-section" id="noticias">\n'
-    '      <div class="section-head"><h2>{latest_news}</h2></div>\n'
     '      <div class="rail-grid" id="categoryGrid"></div>\n'
     '    </div>\n'
     '\n'
@@ -654,7 +665,7 @@ def generate():
                         thumb_or_icon=thumb_or_icon_html(t["thumb"], cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )
-                topics_html = TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=strings["topics_we_cover"], topic_cards=cards)
+                topics_html = TOPICS_GRID_TEMPLATE.format(topic_cards=cards)
                 flat_topics = auto_topics
 
         page = CATEGORY_PAGE_TEMPLATE.format(
@@ -684,9 +695,9 @@ def generate():
                         thumb_or_icon=thumb_or_icon_html(sub_thumbs.get(sub_slug), cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )
-                content_block = TOPICS_GROUP_SECTION_TEMPLATE.format(group_name=strings["topics_we_cover"], topic_cards=sub_cards)
+                content_block = TOPICS_GRID_TEMPLATE.format(topic_cards=sub_cards)
             else:
-                content_block = ARTICLES_GRID_BLOCK.format(latest_news=strings["latest_news"])
+                content_block = ARTICLES_GRID_BLOCK
 
             topic_page = TOPIC_PAGE_TEMPLATE.format(
                 topic_label=t["label"], topic_slug=t["slug"],
@@ -710,7 +721,7 @@ def generate():
                     cat_label=label, cat_slug=slug, cat_icon=cat_icon_html(cat, asset_prefix_page),
                     sidebar_block=sidebar_block, footer_block=footer_block,
                     home=strings["home"], loading=strings["loading"],
-                    content_block=ARTICLES_GRID_BLOCK.format(latest_news=strings["latest_news"]),
+                    content_block=ARTICLES_GRID_BLOCK,
                     subtopic_attr=' data-subtopic="{}"'.format(sub_slug), parent_crumb=parent_crumb_html,
                     everything_about=strings["everything_about"].format(topic=sub_label),
                     meta_desc=strings["all_coverage_of"].format(topic=sub_label),

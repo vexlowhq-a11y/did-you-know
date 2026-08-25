@@ -769,6 +769,19 @@ var server = http.createServer(function (req, res) {
   if (urlPath === '/api/topic-groups' && req.method === 'GET') {
     return sendJSON(res, 200, pagegen.loadTopicGroups());
   }
+  if (urlPath === '/api/topic-groups' && req.method === 'PATCH') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.category || !data.oldName || !data.newName) {
+        return sendJSON(res, 400, { error: 'Faltan datos (categoría, sección actual o nombre nuevo)' });
+      }
+      try {
+        var renamed = pagegen.renameTopicGroup(data.category, data.oldName, data.newName);
+        return sendJSON(res, 200, { ok: true, group: renamed });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
   if (urlPath === '/api/hero' && req.method === 'GET') {
     return sendJSON(res, 200, readJSON(path.join(DATA_DIR, 'hero.json')));
   }
@@ -786,6 +799,26 @@ var server = http.createServer(function (req, res) {
   if (urlPath === '/api/articles' && req.method === 'POST') {
     return readBody(req, function (err, data) {
       if (err || !Array.isArray(data)) return sendJSON(res, 400, { error: 'JSON inválido' });
+
+      // Si el slug de un artículo coincide con el de un tema (o subtema)
+      // de su misma categoría, las dos páginas terminan en el mismo
+      // archivo .html — el artículo pisa la página del tema, y la próxima
+      // regeneración pisa el artículo de vuelta con la plantilla genérica
+      // del tema. Se corta acá, antes de guardar nada, para no dejar ese
+      // estado guardado a medias.
+      var slugConflicts = [];
+      data.forEach(function (a) {
+        if (!a.slug || !a.category) return;
+        var clashes = pagegen.topicOrSubtopicSlugsFor(a.category);
+        if (clashes.indexOf(a.slug) !== -1) {
+          slugConflicts.push('"' + (a.title || a.slug) + '" (slug "' + a.slug + '")');
+        }
+      });
+      if (slugConflicts.length) {
+        return sendJSON(res, 400, {
+          error: 'El slug de ' + slugConflicts.join(', ') + ' ya lo usa un tema/subtema de esa categoría — cambiá el slug del artículo para que no coincida con el nombre del tema.'
+        });
+      }
 
       var articlesFile = path.join(DATA_DIR, 'articulos.json');
       var previous = [];

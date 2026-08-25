@@ -7,6 +7,12 @@
   var articlesData = [];
   var heroEditIndex = null;
   var articleEditIndex = null;
+  // Los íconos subidos siempre se guardan con el mismo nombre de archivo
+  // (_category-icon.*), así que el navegador puede seguir mostrando la
+  // imagen vieja cacheada en esa URL después de subir una nueva. Este
+  // valor se suma como query string a las miniaturas para forzar que el
+  // panel las vuelva a pedir cada vez que se recargan las categorías.
+  var assetCacheBust = Date.now();
 
   /* ---- Publicar cambios en internet (git add + commit + push) ---- */
   var deployBtn = document.getElementById('deployBtn');
@@ -531,6 +537,10 @@
       name.className = 'group-name';
       name.textContent = group[0];
       row.appendChild(name);
+      var renameGroupBtn = document.createElement('button');
+      renameGroupBtn.type = 'button'; renameGroupBtn.title = 'Renombrar sección'; renameGroupBtn.textContent = '✎';
+      renameGroupBtn.addEventListener('click', function () { renameTopicGroupPrompt(group[0]); });
+      row.appendChild(renameGroupBtn);
       group[1].forEach(function (pair) {
         var slug = pair[0], label = pair[1];
         var category = articleCategory.value;
@@ -610,6 +620,23 @@
       return postJSON('/api/regenerate', {});
     }).catch(function (err) {
       toast(err.message || 'No se pudo quitar la imagen del tema', true);
+    });
+  }
+
+  function renameTopicGroupPrompt(currentName) {
+    var newName = window.prompt('Nuevo nombre para la sección "' + currentName + '":', currentName);
+    if (newName === null) return;
+    newName = newName.trim();
+    if (!newName || newName === currentName) return;
+    apiRequest('PATCH', '/api/topic-groups', { category: articleCategory.value, oldName: currentName, newName: newName }).then(function () {
+      toast('Sección renombrada a "' + newName + '"');
+      return refreshGroupsAndTopics();
+    }).then(function () {
+      renderTopicManager();
+      populateNewTopicGroupSelect();
+      return postJSON('/api/regenerate', {});
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo renombrar la sección', true);
     });
   }
 
@@ -1202,7 +1229,7 @@
     var thumb = document.createElement('div');
     thumb.className = 'thumb';
     if (homeIconData.iconImage) {
-      thumb.style.backgroundImage = "url('/site/" + homeIconData.iconImage + "')";
+      thumb.style.backgroundImage = "url('/site/" + homeIconData.iconImage + "?v=" + assetCacheBust + "')";
       thumb.style.backgroundSize = 'cover';
       thumb.style.backgroundPosition = 'center';
     } else {
@@ -1257,6 +1284,7 @@
         return getJSON('/api/home-icon');
       }).then(function (data) {
         homeIconData = data;
+        assetCacheBust = Date.now();
         renderHomeIcon();
         toast('Ícono de Home actualizado');
       }).catch(function (err) {
@@ -1297,7 +1325,7 @@
       var thumb = document.createElement('div');
       thumb.className = 'thumb';
       if (c.iconImage) {
-        thumb.style.backgroundImage = "url('/site/" + c.iconImage + "')";
+        thumb.style.backgroundImage = "url('/site/" + c.iconImage + "?v=" + assetCacheBust + "')";
         thumb.style.backgroundSize = 'cover';
         thumb.style.backgroundPosition = 'center';
       } else {
@@ -1429,6 +1457,7 @@
   function refreshCategories() {
     return getJSON('/api/categories').then(function (list) {
       categories = list;
+      assetCacheBust = Date.now();
       renderCategoriesList();
       fillSelect(heroCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
       fillSelect(articleCategory, contentCategories(), 'slug', function (c) { return c.icon + ' ' + c.label; });
