@@ -196,6 +196,31 @@ function addSection(categorySlug, name) {
   return { name: trimmed };
 }
 
+/* Saca una sección de data/topics.json. Solo se puede borrar si ya no
+   tiene ningún tema adentro (los artículos guardados directo en la
+   sección, sin tema, se validan aparte desde server.js — acá solo se
+   chequea la parte de temas, que es lo que vive en este archivo). */
+function deleteSection(categorySlug, name) {
+  if (!categoryBySlug(categorySlug)) throw new Error('Categoría desconocida: ' + categorySlug);
+
+  var topicsPath = path.join(DATA_DIR, 'topics.json');
+  var allGroups = loadTopicGroups();
+  var groups = allGroups[categorySlug] || [];
+  var idx = -1;
+  for (var g = 0; g < groups.length; g++) {
+    if (groups[g][0] === name) { idx = g; break; }
+  }
+  if (idx === -1) throw new Error('No se encontró esa sección en esta categoría');
+  if (groups[idx][1].length > 0) {
+    throw new Error('Esta sección todavía tiene temas adentro. Movelos o eliminalos antes de borrar la sección.');
+  }
+
+  groups.splice(idx, 1);
+  allGroups[categorySlug] = groups;
+  fs.writeFileSync(topicsPath, JSON.stringify(allGroups, null, 2) + '\n', 'utf8');
+  return { name: name };
+}
+
 /* Nombres de los grupos/secciones ya existentes para una categoría, en el
    orden en que aparecen en la página (ej. "⭐ Populares", "Nintendo", ...). */
 function listGroupNames(categorySlug) {
@@ -1029,6 +1054,7 @@ module.exports = {
   topicLabelFor: topicLabelFor,
   addTopic: addTopic,
   addSection: addSection,
+  deleteSection: deleteSection,
   listGroupNames: listGroupNames,
   renameTopic: renameTopic,
   renameTopicGroup: renameTopicGroup,

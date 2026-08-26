@@ -782,6 +782,34 @@ var server = http.createServer(function (req, res) {
       }
     });
   }
+  if (urlPath === '/api/sections' && req.method === 'DELETE') {
+    return readBody(req, function (err, data) {
+      if (err || !data || !data.category || !data.name) {
+        return sendJSON(res, 400, { error: 'Faltan datos (categoría o nombre de la sección)' });
+      }
+      var articles = [];
+      try { articles = readJSON(path.join(DATA_DIR, 'articulos.json')); } catch (e) { articles = []; }
+      var usedBy = articles.filter(function (a) { return a.category === data.category && a.section === data.name; });
+      var topicGroups = pagegen.loadTopicGroups()[data.category] || [];
+      var group = topicGroups.find(function (g) { return g[0] === data.name; });
+      var topicCount = group ? group[1].length : 0;
+      if (usedBy.length || topicCount) {
+        var msgParts = [];
+        if (usedBy.length) msgParts.push(usedBy.length + ' artículo(s)');
+        if (topicCount) msgParts.push(topicCount + ' tema(s)');
+        return sendJSON(res, 409, {
+          error: 'Esta sección todavía tiene ' + msgParts.join(' y ') + '. Movelos o eliminalos antes de borrar la sección.',
+          articles: usedBy.map(function (a) { return a.title; })
+        });
+      }
+      try {
+        var removed = pagegen.deleteSection(data.category, data.name);
+        return sendJSON(res, 200, { ok: true, section: removed });
+      } catch (e) {
+        return sendJSON(res, 400, { error: e.message });
+      }
+    });
+  }
   if (urlPath === '/api/topic-groups' && req.method === 'PATCH') {
     return readBody(req, function (err, data) {
       if (err || !data || !data.category || !data.oldName || !data.newName) {

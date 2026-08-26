@@ -420,6 +420,7 @@
   var articleCategory = document.getElementById('articleCategory');
   var articleSection = document.getElementById('articleSection');
   var renameSectionBtn = document.getElementById('renameSectionBtn');
+  var deleteSectionBtn = document.getElementById('deleteSectionBtn');
   var newSectionRow = document.getElementById('newSectionRow');
   var newSectionName = document.getElementById('newSectionName');
   var newSectionCreateBtn = document.getElementById('newSectionCreateBtn');
@@ -638,11 +639,13 @@
     if (selectName) articleSection.value = selectName;
     else if (names.some(function (n) { return n === current; })) articleSection.value = current;
     renameSectionBtn.hidden = !articleSection.value || articleSection.value === '__new__';
+    deleteSectionBtn.hidden = !articleSection.value || articleSection.value === '__new__';
   }
 
   articleSection.addEventListener('change', function () {
     newSectionRow.hidden = articleSection.value !== '__new__';
     renameSectionBtn.hidden = !articleSection.value || articleSection.value === '__new__';
+    deleteSectionBtn.hidden = !articleSection.value || articleSection.value === '__new__';
     if (!newSectionRow.hidden) newSectionName.focus();
     refreshTopicOptions();
     newTopicRow.hidden = true;
@@ -676,6 +679,23 @@
 
   renameSectionBtn.addEventListener('click', function () {
     renameTopicGroupPrompt(articleSection.value);
+  });
+
+  deleteSectionBtn.addEventListener('click', function () {
+    var name = articleSection.value;
+    if (!name || name === '__new__') return;
+    if (!window.confirm('¿Eliminar la sección "' + name + '"? Solo se puede borrar si no tiene temas ni artículos adentro.')) return;
+    deleteJSON('/api/sections', { category: articleCategory.value, name: name }).then(function () {
+      toast('Sección "' + name + '" eliminada');
+      return refreshGroupsAndTopics();
+    }).then(function () {
+      refreshSectionOptions();
+      newSectionRow.hidden = true;
+      refreshTopicOptions();
+      renderTopicManager();
+    }).catch(function (err) {
+      toast(err.message || 'No se pudo eliminar la sección', true);
+    });
   });
 
   function renderTopicManager() {

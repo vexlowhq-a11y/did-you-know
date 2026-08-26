@@ -275,6 +275,8 @@ body { padding: 0; }
   display: flex; align-items: center; justify-content: center; font-size: 13px; padding: 0;
 }
 .btn-icon:hover { color: var(--text); border-color: var(--text-muted); }
+.btn-icon.danger { color: #E5484D; border-color: rgba(229, 72, 77, .35); }
+.btn-icon.danger:hover { background: rgba(229, 72, 77, .1); color: #E5484D; }
 .form-grid { align-items: start; }
 .form-grid input, .form-grid select, .form-grid textarea {
   font-family: 'Manrope';
