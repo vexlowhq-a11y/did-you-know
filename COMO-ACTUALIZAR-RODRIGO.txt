@@ -1,0 +1,50 @@
+CÓMO BAJAR LOS CAMBIOS NUEVOS (Rodrigo)
+==========================================
+
+1) Abrí una terminal (Git Bash o CMD) dentro de la carpeta del proyecto
+   "did-you-know".
+
+2) Escribí este comando y presioná Enter:
+
+   git pull origin main
+
+3) Puede pasar una de estas tres cosas:
+
+   a) Todo bien, dice algo como "Fast-forward" o una lista de archivos
+      actualizados. Listo, ya tenés los cambios.
+
+   b) Te dice algo como:
+      "Your local changes to the following files would be overwritten..."
+      Esto pasa si vos tenías algo sin guardar/comitear en el panel.
+      Solución:
+        git stash
+        git pull origin main
+      Con eso guarda tus cambios locales a un costado y baja lo nuevo.
+      Si después necesitás recuperar esos cambios locales, avisame.
+
+   c) Te tira error de conexión o de usuario/contraseña de GitHub.
+      Avisame con el mensaje exacto que te aparece.
+
+4) MUY IMPORTANTE — reiniciar el panel:
+   Últimamente hubo bastantes cambios en el código del panel
+   (admin/pagegen.js, admin/server.js, admin/generate_pages.py). Con
+   Refrescar (F5) el navegador NO alcanza para que tomen efecto.
+
+   Tenés que:
+   - Cerrar la ventana/consola donde está corriendo el panel
+     (start-admin.bat), si está abierta.
+   - Volver a abrir start-admin.bat.
+   - Recién ahí abrir/refrescar el navegador en el panel.
+
+   Si en algún momento cambia solo admin/admin.js, admin/index.html,
+   admin/admin.css o css/style.css, ahí sí alcanza con F5, sin
+   reiniciar. Pero si no estás seguro, mejor reiniciar siempre — no
+   hace ningún daño.
+
+Novedades del panel para tener en cuenta al usarlo:
+- Al agregar un artículo ahora primero se elige la "Sección" (antes
+  no existía este campo) — es obligatoria. El "Tema" pasó a ser
+  opcional y solo muestra los temas de la sección elegida.
+- Si a un artículo le sacás el tema/subtema y era el último que lo
+  usaba, el panel borra ese tema/subtema solo (no hace falta pedirle
+  nada a Claude para eso).
