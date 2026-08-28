@@ -13,7 +13,17 @@
   ],
   "technology": [],
   "science": [],
-  "entertainment": [],
+  "entertainment": [
+    [
+      "Cinema",
+      [
+        [
+          "history",
+          "History"
+        ]
+      ]
+    ]
+  ],
   "sports": [
     [
       "Badminton",

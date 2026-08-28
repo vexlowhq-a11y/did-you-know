@@ -61,6 +61,11 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/entertainment/history.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/gaming/</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>daily</changefreq>
@@ -122,6 +127,11 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/business/mcdonalds.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/curiosities/the-wow-signal.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
   </url>
