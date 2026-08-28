@@ -30,7 +30,17 @@
     ]
   ],
   "world": [],
-  "curiosities": [],
+  "curiosities": [
+    [
+      "Mysteries & Unexplained",
+      [
+        [
+          "unexplainedevents",
+          "Unexplained Events"
+        ]
+      ]
+    ]
+  ],
   "guides": [],
   "social": [],
   "business": [
