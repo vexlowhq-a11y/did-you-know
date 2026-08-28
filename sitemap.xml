@@ -81,6 +81,11 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/gastronomy/italiancuisine.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/history/</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>daily</changefreq>
@@ -142,6 +147,11 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/entertainment/how-hollywood-became-the-movie-capital-of-the-world.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/gaming/minecraft.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
   </url>

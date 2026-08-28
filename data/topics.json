@@ -80,5 +80,16 @@
       "historia",
       []
     ]
+  ],
+  "gastronomy": [
+    [
+      "World Cuisines",
+      [
+        [
+          "italiancuisine",
+          "Italian Cuisine"
+        ]
+      ]
+    ]
   ]
 }
