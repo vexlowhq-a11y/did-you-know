@@ -116,6 +116,11 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/science-space/blackholes.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/social-media/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
@@ -177,6 +182,11 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/history/the-day-pompeii-disappeared-what-really-happened-in-79-ce.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/lifesyle/how-perfume-conquered-the-world.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
   </url>
