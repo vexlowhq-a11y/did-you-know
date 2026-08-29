@@ -31,16 +31,6 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/business/foodbeverage.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/business/foodbeverage-mcdonalds.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://didyouknow.com/categoria/curiosities/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
@@ -131,11 +121,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/social-media/youtube-youtube.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://didyouknow.com/categoria/sports/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
@@ -162,11 +147,6 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/ai/could-artificial-intelligence-become-smarter-than-humans.html</loc>
-    <lastmod>2026-08-28</lastmod>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/business/mcdonalds.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
   </url>
