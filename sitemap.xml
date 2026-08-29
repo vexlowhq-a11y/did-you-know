@@ -126,6 +126,11 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/social-media/youtube.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/sports/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
@@ -187,6 +192,11 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/lifesyle/how-perfume-conquered-the-world.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/science-space/what-would-happen-if-you-fell-into-a-black-hole.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
   </url>
