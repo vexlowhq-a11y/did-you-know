@@ -397,10 +397,12 @@
   var allGuideCards = document.querySelectorAll('.guides-grid .guide-card');
   var noResultsEl = document.getElementById('topicNoResults');
 
-  // Si la página no tiene grilla de artículos dinámica (categoryGrid), pero sí
-  // tiene tarjetas de tema, mostramos la cantidad de temas en vez de "Cargando…".
+  // Si la página no tiene grilla de artículos dinámica (categoryGrid),
+  // mostramos la cantidad de temas en vez de "Cargando…" — incluye el caso
+  // de 0 tarjetas (categoría con secciones creadas pero todavía vacías),
+  // que si no se queda trabada en "Cargando…" para siempre.
   var categoryCountEl = document.getElementById('categoryCount');
-  if (categoryCountEl && !categoryGrid && allGuideCards.length) {
+  if (categoryCountEl && !categoryGrid) {
     categoryCountEl.textContent = allGuideCards.length + (allGuideCards.length === 1 ? T.topicSingular : T.topicPlural);
   }
 

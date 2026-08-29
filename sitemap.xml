@@ -36,16 +36,6 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/curiosities/unexplainedevents.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/curiosities/unexplainedevents-thewowsignal.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://didyouknow.com/categoria/entertainment/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
@@ -59,11 +49,6 @@
     <loc>https://didyouknow.com/categoria/gaming/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/gaming/iconicgames.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/gastronomy/</loc>
@@ -111,16 +96,6 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/social-media/</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>daily</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/social-media/youtube.html</loc>
-    <lastmod>2026-08-29</lastmod>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
     <loc>https://didyouknow.com/categoria/sports/</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>daily</changefreq>
@@ -146,22 +121,12 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://didyouknow.com/categoria/ai/could-artificial-intelligence-become-smarter-than-humans.html</loc>
-    <lastmod>2026-08-28</lastmod>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/curiosities/the-wow-signal.html</loc>
-    <lastmod>2026-08-28</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://didyouknow.com/categoria/social-media/</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/entertainment/how-hollywood-became-the-movie-capital-of-the-world.html</loc>
-    <lastmod>2026-08-28</lastmod>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://didyouknow.com/categoria/gaming/minecraft.html</loc>
     <lastmod>2026-08-28</lastmod>
     <changefreq>monthly</changefreq>
   </url>
@@ -182,6 +147,16 @@
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/science-space/what-would-happen-if-you-fell-into-a-black-hole.html</loc>
+    <lastmod>2026-08-29</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/ai/could-artificial-intelligence-become-smarter-than-humans.html</loc>
+    <lastmod>2026-08-28</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/social-media/prueba-3.html</loc>
     <lastmod>2026-08-29</lastmod>
     <changefreq>monthly</changefreq>
   </url>

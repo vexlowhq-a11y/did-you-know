@@ -27,6 +27,22 @@ const ADMIN_DIR = __dirname;
 const CSS_FILE = path.join(ROOT, 'css', 'style.css');
 const PORT = 4321;
 
+/* Corre generate_pages.py y devuelve una Promise. La página de una
+   categoría (las tarjetas de sus temas/artículos sueltos) es HTML
+   estático armado por este script — no se actualiza sola con solo
+   guardar un artículo, así que hay que llamarlo para que una tarjeta
+   nueva (o una que se sacó) se vea reflejada ahí. */
+function runRegenerate() {
+  return new Promise(function (resolve) {
+    var py = spawn('python', [path.join(ADMIN_DIR, 'generate_pages.py')], { cwd: ROOT });
+    var out = '';
+    py.stdout.on('data', function (d) { out += d.toString('utf8'); });
+    py.stderr.on('data', function (d) { out += d.toString('utf8'); });
+    py.on('error', function (e) { resolve({ ok: false, output: 'No se pudo ejecutar Python: ' + e.message }); });
+    py.on('close', function (code) { resolve({ ok: code === 0, output: out }); });
+  });
+}
+
 // Tamaños de íconos/logo ajustables desde la pestaña "Apariencia" del
 // panel: viven como variables CSS en el :root de css/style.css, así el
 // cambio se aplica al toque (sin regenerar ninguna página).
@@ -936,7 +952,14 @@ var server = http.createServer(function (req, res) {
         } catch (e) { /* ya no existe / ya se borró desde otro lado — no pasa nada */ }
       });
 
-      return sendJSON(res, 200, { ok: true, generated: generated, removed: removed, errors: errors, emptiedTopics: emptiedTopics, emptiedSubtopics: emptiedSubtopics });
+      // La tarjeta de un artículo en su página de categoría (temas y
+      // artículos sueltos guardados directo en una sección) es HTML
+      // estático armado acá — sin este paso, "Guardar" deja la página del
+      // artículo lista pero la categoría se ve igual que antes hasta que
+      // alguien aprieta "Regenerar categorías y temas" a mano.
+      return runRegenerate().then(function () {
+        return sendJSON(res, 200, { ok: true, generated: generated, removed: removed, errors: errors, emptiedTopics: emptiedTopics, emptiedSubtopics: emptiedSubtopics });
+      });
     });
   }
   if (urlPath === '/api/deploy' && req.method === 'POST') {
@@ -984,17 +1007,9 @@ var server = http.createServer(function (req, res) {
     return;
   }
   if (urlPath === '/api/regenerate' && req.method === 'POST') {
-    var py = spawn('python', [path.join(ADMIN_DIR, 'generate_pages.py')], { cwd: ROOT });
-    var out = '';
-    py.stdout.on('data', function (d) { out += d.toString('utf8'); });
-    py.stderr.on('data', function (d) { out += d.toString('utf8'); });
-    py.on('error', function (e) {
-      sendJSON(res, 500, { ok: false, error: 'No se pudo ejecutar Python: ' + e.message });
+    return runRegenerate().then(function (result) {
+      sendJSON(res, result.ok ? 200 : 500, result.ok ? result : { ok: false, error: result.output, output: result.output });
     });
-    py.on('close', function (code) {
-      sendJSON(res, code === 0 ? 200 : 500, { ok: code === 0, output: out });
-    });
-    return;
   }
 
   // ---- Preview del sitio real ----

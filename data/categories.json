@@ -68,12 +68,6 @@
     "iconImage": "img/science-space/_category-icon.png"
   },
   {
-    "slug": "social-media",
-    "label": "Social Media",
-    "icon": "📰",
-    "iconImage": "img/social-media/_category-icon.png"
-  },
-  {
     "slug": "sports",
     "label": "Sports",
     "icon": "📰",
@@ -90,5 +84,10 @@
     "label": "world",
     "icon": "📰",
     "iconImage": "img/world/_category-icon.png"
+  },
+  {
+    "slug": "social-media",
+    "label": "Social Media",
+    "icon": "📰"
   }
 ]
