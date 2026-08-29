@@ -66,12 +66,7 @@
   "business": [
     [
       "Companies",
-      [
-        [
-          "foodbeverage",
-          "Food & Beverage"
-        ]
-      ]
+      []
     ]
   ],
   "news": [],
@@ -128,7 +123,12 @@
   "social-media": [
     [
       "Social Platforms",
-      []
+      [
+        [
+          "youtube",
+          "YouTube"
+        ]
+      ]
     ]
   ]
 }
