@@ -604,21 +604,6 @@ def generate():
     with open(ARTICULOS_JSON, "r", encoding="utf-8") as f:
         all_articles = json.load(f)
 
-    def single_article_slug_for_topic(cat_slug, topic_slug):
-        # Si un tema tiene un solo artículo adentro y ningún subtema, no
-        # tiene sentido obligar a pasar por la página del tema (una
-        # "carpeta" con una sola cosa adentro) — la tarjeta de la
-        # categoría enlaza directo al artículo. En cuanto haya un segundo
-        # artículo o un subtema, vuelve a comportarse como carpeta sola.
-        if subtopics_for(cat_slug, topic_slug):
-            return None
-        matches = [
-            a for a in all_articles
-            if a.get("category") == cat_slug and a.get("topic") == topic_slug
-            and not a.get("subtopic") and a.get("slug") and str(a.get("body") or "").strip()
-        ]
-        return matches[0]["slug"] if len(matches) == 1 else None
-
     asset_prefix_page = "../../"  # para páginas de categoría/tema/artículo (2 niveles adentro)
     asset_prefix_root = ""  # para páginas estáticas / index (en la raíz)
 
@@ -656,9 +641,8 @@ def generate():
                 cards = ""
                 for topic_slug, topic_label in items:
                     thumb = thumbs.get(topic_slug)
-                    card_href_slug = single_article_slug_for_topic(slug, topic_slug) or topic_slug
                     cards += TOPIC_CARD_TEMPLATE.format(
-                        slug=card_href_slug, label=topic_label,
+                        slug=topic_slug, label=topic_label,
                         thumb_or_icon=thumb_or_icon_html(thumb, cat_icon_html(cat, asset_prefix_page), asset_prefix_page),
                         view_more=strings["view_more_cards"],
                     )

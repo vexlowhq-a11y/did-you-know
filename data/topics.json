@@ -45,12 +45,7 @@
     ]
   ],
   "world": [],
-  "curiosities": [
-    [
-      "Mysteries & Unexplained",
-      []
-    ]
-  ],
+  "curiosities": [],
   "guides": [],
   "social": [],
   "business": [
@@ -110,10 +105,5 @@
       ]
     ]
   ],
-  "social-media": [
-    [
-      "Social Plataform",
-      []
-    ]
-  ]
+  "social-media": []
 }
