@@ -386,8 +386,8 @@
     return postJSON('/api/hero', heroData).then(function () {
       renderHeroList();
       toast(successMsg || 'Guardado');
-    }).catch(function () {
-      toast('No se pudo guardar. ¿Está corriendo el panel?', true);
+    }).catch(function (err) {
+      toast((err && err.message) || 'No se pudo guardar. ¿Está corriendo el panel?', true);
     });
   }
 
@@ -1357,8 +1357,8 @@
         }
         return result;
       });
-    }).catch(function () {
-      toast('No se pudo guardar. ¿Está corriendo el panel?', true);
+    }).catch(function (err) {
+      toast((err && err.message) || 'No se pudo guardar. ¿Está corriendo el panel?', true);
     });
   }
 
