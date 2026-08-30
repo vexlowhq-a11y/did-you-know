@@ -2,7 +2,12 @@
   "gaming": [
     [
       "Video Games",
-      []
+      [
+        [
+          "iconicgames",
+          "Iconic Games"
+        ]
+      ]
     ]
   ],
   "ai": [
@@ -45,13 +50,28 @@
     ]
   ],
   "world": [],
-  "curiosities": [],
+  "curiosities": [
+    [
+      "Mysteries & Unexplained",
+      [
+        [
+          "unexplainedevents",
+          "Unexplained Events"
+        ]
+      ]
+    ]
+  ],
   "guides": [],
   "social": [],
   "business": [
     [
       "Companies",
-      []
+      [
+        [
+          "foodbeverage",
+          "Food & Beverage"
+        ]
+      ]
     ]
   ],
   "news": [],

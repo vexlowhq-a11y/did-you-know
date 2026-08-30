@@ -2,127 +2,142 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://didyouknow.com/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/news/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/trending/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/ai/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/ai/superintelligence.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/business/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/business/foodbeverage.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/curiosities/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/curiosities/unexplainedevents.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/entertainment/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/entertainment/history.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/gaming/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/gaming/iconicgames.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/categoria/gastronomy/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/gastronomy/italiancuisine.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/history/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/history/ancientcivilizations.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/history/ancientcivilizations-pompeii.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/lifesyle/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/lifesyle/history.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/science-space/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/science-space/blackholes.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/social-media/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/sports/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/sports/uefachampionsleague.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/sports/uefachampionsleague-thehistoryoftheuefachampionsleague.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>weekly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/tecnology/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/categoria/world/</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>daily</changefreq>
   </url>
   <url>
@@ -156,38 +171,53 @@
     <changefreq>monthly</changefreq>
   </url>
   <url>
+    <loc>https://didyouknow.com/categoria/business/mcdonald-s.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/curiosities/the-wow-signal.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://didyouknow.com/categoria/gaming/minecraft.html</loc>
+    <lastmod>2026-08-30</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://didyouknow.com/about-didyouknow.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/editorial-policy.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/contact.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/advertise.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/privacy.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/terms.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
   <url>
     <loc>https://didyouknow.com/cookies.html</loc>
-    <lastmod>2026-08-29</lastmod>
+    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
   </url>
 </urlset>
