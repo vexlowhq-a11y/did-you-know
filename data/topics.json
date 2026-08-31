@@ -37,7 +37,12 @@
   "sports": [
     [
       "Badminton",
-      []
+      [
+        [
+          "mostprestigiousbadmintoncompetitions",
+          "Most Prestigious Badminton Competitions"
+        ]
+      ]
     ],
     [
       "Fútbol",
@@ -49,7 +54,17 @@
       ]
     ]
   ],
-  "world": [],
+  "world": [
+    [
+      "Countries & Cultures",
+      [
+        [
+          "countries",
+          "Countries"
+        ]
+      ]
+    ]
+  ],
   "curiosities": [
     [
       "Mysteries & Unexplained",
@@ -77,8 +92,13 @@
   "news": [],
   "tecnology": [
     [
-      "historia",
-      []
+      "Smartphones & Mobile",
+      [
+        [
+          "mobiletechnology",
+          "Mobile Technology"
+        ]
+      ]
     ]
   ],
   "gastronomy": [
