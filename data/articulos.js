@@ -304,7 +304,7 @@ const VEXLOW_ARTICLES = [
     "date": "2026-09-04",
     "readTime": "",
     "topic": "uefachampionsleague",
-    "subtopic": "",
+    "subtopic": "thehistoryoftheuefachampionsleague",
     "slug": "the-origins-of-the-competition",
     "dek": "",
     "image": "img/sports/portada.png",
